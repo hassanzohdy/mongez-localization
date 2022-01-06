@@ -59,6 +59,20 @@ export function setTranslationsList(translations: TranslationsList): void {
 }
 
 /**
+ * Get the entire translations list
+ */
+export function getTranslationsList(): TranslationsList {
+  return translationsList;
+}
+
+/**
+ * Get the keywords list of the given locale code
+ */
+export function getKeywordsListOf(localeCode: string): Keywords | null {
+  return translationsList[localeCode] || null;
+}
+
+/**
  * Set fallback locale code, if the keyword does not exist on current locale code,
  * then check it in the faLLBACK locale code instead
  */

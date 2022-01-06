@@ -228,6 +228,26 @@ import { setFallbackLocaleCode } from '@mongez/localization';
 setFallbackLocaleCode('ar'); // Now fallback is changed to `ar`
 ```
 
+## Getting Translations list
+
+To get the entire translations list of all locale codes, use `getTranslationsList` function.
+
+```ts
+// somewhere in the app
+import { getTranslationsList } from '@mongez/localization';
+
+getTranslationsList(); // something like {en: {home: 'Home Page'}, ar: {home: 'الصفحة الرئيسية'}}
+```
+
+To Get keywords list of certain locale code, use `getKeywordsListOf` function.
+
+```ts
+// somewhere in the app
+import { getKeywordsListOf } from '@mongez/localization';
+
+getKeywordsListOf('en'); // something like {home: 'Home Page'}}
+```
+
 ## Localization Events
 
 You can be notified once a locale code is changed, or once the fallback locale code is changed as well using `localizationEvents` object.
@@ -257,6 +277,12 @@ localizationEvents.onChange('fallback', (newLocaleCode, oldLocaleCode) => {
 // assuming current fallback locale code is `en`
 setFallbackLocaleCode('ar'); // once calling the `setFallbackLocaleCode` the `onChange.fallback` event will be triggered.
 ```
+
+## Change Log
+
+- 1.0.11 (06/01/2022)
+  - Added [grouped translations](#grouped-translations)
+  - Added [Translations list](#getting-translations-list)
 
 ## TODO
 

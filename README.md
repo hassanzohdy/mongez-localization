@@ -40,7 +40,7 @@ setLocalizationConfigurations({
   /**
    * Fall back locale code
    */
-  fallback: 'en'
+  fallback: 'en',
   /**
    * Set translations list
    */

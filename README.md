@@ -280,7 +280,7 @@ setFallbackLocaleCode('ar'); // once calling the `setFallbackLocaleCode` the `on
 
 ## Change Log
 
-- 1.0.11 (06/01/2022)
+- 1.0.12 (06/01/2022)
   - Added [grouped translations](#grouped-translations)
   - Added [Translations list](#getting-translations-list)
 

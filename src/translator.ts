@@ -46,9 +46,9 @@ export function setCurrentLocaleCode(localeCode: string): void {
  */
 export function extend(localeCode: string, keywords: Keywords) {
   translationsList[localeCode] = Obj.merge(
-    translationsList[localeCode],
+    translationsList[localeCode] || {},
     keywords
-  );
+  ) as Keywords;
 }
 
 /**

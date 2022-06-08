@@ -1,5 +1,6 @@
+import { vsprintf } from "sprintf-js";
 import { localizationEvents } from "./events";
-import { Obj, vsprintf } from "@mongez/reinforcements";
+import { Obj } from "@mongez/reinforcements";
 import { GroupedTranslations, Keywords, TranslationsList } from "./types";
 
 /**

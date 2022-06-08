@@ -8,7 +8,7 @@ A simple i18n localization handler.
 
 Or
 
-`npm i @mognez/localization`
+`npm i @mongez/localization`
 
 ## Usage
 
@@ -20,27 +20,30 @@ Create a `src/config/localization.ts` or `localization.js` of you still use Java
 
 ```ts
 // src/config/localization.ts
-import { TranslationsList, setLocalizationConfigurations } from '@mongez/localization';
+import {
+  TranslationsList,
+  setLocalizationConfigurations,
+} from "@mongez/localization";
 
 const translations: TranslationsList = {
-    en: {
-        home: 'Home Page',
-        contactUs: 'Contact Us',
-    },
-    ar: {
-        home: 'الصفحة الرئيسية',
-    },
+  en: {
+    home: "Home Page",
+    contactUs: "Contact Us",
+  },
+  ar: {
+    home: "الصفحة الرئيسية",
+  },
 };
 
-setLocalizationConfigurations({    
+setLocalizationConfigurations({
   /**
    * Default locale code
    */
-  defaultLocaleCode: 'ar',
+  defaultLocaleCode: "ar",
   /**
    * Fall back locale code
    */
-  fallback: 'en',
+  fallback: "en",
   /**
    * Set translations list
    */
@@ -58,10 +61,10 @@ Now we can start using our translator by calling the `trans` method.
 
 ```ts
 // some-file-in-the-project.ts
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 
 // based on our previous configurations, the default locale code is ar, so translation will be taken from its object.
-trans('home'); // الصفحة الرئيسية 
+trans("home"); // الصفحة الرئيسية
 ```
 
 ## Translation fallback
@@ -70,10 +73,10 @@ As we set our fallback locale code as `en`, now whenever the keyword is not defi
 
 ```ts
 // some-file-in-the-project.ts
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 
 // the `contactUs` keyword is not defined in `ar` locale code but defined in the fallback locale code `en`, so translation will be taken from `en` object
-trans('contactUs'); // Contact Us
+trans("contactUs"); // Contact Us
 ```
 
 ## Missing Translation keyword
@@ -82,9 +85,9 @@ If the keyword doesn't exist in the current locale code nor in the fallback loca
 
 ```ts
 // some-file-in-the-project.ts
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 
-trans('unknownKeyword'); // unknownKeyword
+trans("unknownKeyword"); // unknownKeyword
 ```
 
 ## Translating from certain locale code
@@ -93,9 +96,9 @@ We can get a translation keyword from certain locale code by using `transFrom` f
 
 ```ts
 // some-file-in-the-project.ts
-import { transFrom } from '@mongez/localization';
+import { transFrom } from "@mongez/localization";
 
-transFrom('en', 'contactUs'); // Contact Us
+transFrom("en", "contactUs"); // Contact Us
 ```
 
 ## Extending Translations
@@ -106,20 +109,20 @@ Let's create a `src/locales` directory and add `en.ts` and `ar.ts` files inside 
 
 ```ts
 // src/locales/en.ts
-import { extend } from '@mongez/localization';
+import { extend } from "@mongez/localization";
 
-extend('en', {
-    home: 'Home Page',
-    contactUs: 'Contact Us',
+extend("en", {
+  home: "Home Page",
+  contactUs: "Contact Us",
 });
 ```
 
 ```ts
 // src/locales/ar.ts
-import { extend } from '@mongez/localization';
+import { extend } from "@mongez/localization";
 
-extend('ar', {
-    home: 'الصفحة الرئيسية',
+extend("ar", {
+  home: "الصفحة الرئيسية",
 });
 ```
 
@@ -127,19 +130,19 @@ Now let's just import our locales file in the `src/config/localization.ts` file
 
 ```ts
 // src/config/localization.ts
-import 'src/locales/en';
-import 'src/locales/ar';
-import { setLocalizationConfigurations } from '@mongez/localization';
+import "src/locales/en";
+import "src/locales/ar";
+import { setLocalizationConfigurations } from "@mongez/localization";
 
-setLocalizationConfigurations({    
+setLocalizationConfigurations({
   /**
    * Default locale code
    */
-  defaultLocaleCode: 'ar',
+  defaultLocaleCode: "ar",
   /**
    * Fall back locale code
    */
-  fallback: 'en'
+  fallback: "en",
 });
 ```
 
@@ -151,17 +154,17 @@ Another way to set translations is to define a keyword and inside it list of tra
 
 ```ts
 // src/locales/localization.ts
-import { groupedTranslations } from '@mongez/localization';
+import { groupedTranslations } from "@mongez/localization";
 
 groupedTranslations({
-    home: {
-        en: 'Home Page',
-        ar: 'الصفحة الرئيسية',
-    },
-    contactUs: {
-        en: 'Contact Us',
-        ar: 'اتصل بنا',
-    }
+  home: {
+    en: "Home Page",
+    ar: "الصفحة الرئيسية",
+  },
+  contactUs: {
+    en: "Contact Us",
+    ar: "اتصل بنا",
+  },
 });
 ```
 
@@ -171,11 +174,11 @@ Another powerful feature is to set a placeholder that can be modified dynamicall
 
 ```ts
 // src/locales/en.ts
-import { extend } from '@mongez/localization';
+import { extend } from "@mongez/localization";
 
-extend('en', {
-    createItem: 'Create New %s',
-    minimumOrderPurchase: 'Minimum purchase amount for this order is %d USD', 
+extend("en", {
+  createItem: "Create New %s",
+  minimumOrderPurchase: "Minimum purchase amount for this order is %d USD",
 });
 ```
 
@@ -183,20 +186,20 @@ Now we defined two keywords, `createItem` and `minimumOrderPurchase`, in the `cr
 
 ```ts
 // somewhere in the app
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 
-trans('createItem', 'Order'); // Create New Order
-trans('createItem', 'Customer'); // Create New Customer
-trans('createItem', 'Category'); // Create New Category
+trans("createItem", "Order"); // Create New Order
+trans("createItem", "Customer"); // Create New Customer
+trans("createItem", "Category"); // Create New Category
 ```
 
 As easy as that!, now let's see the other keyword `minimumOrderPurchase` it contains `%d` placeholder, that means this placeholder will be replaced with an `integer` value.
 
 ```ts
 // somewhere in the app
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 
-trans('minimumOrderPurchase', 12); // Minimum purchase amount for this order is 12 USD
+trans("minimumOrderPurchase", 12); // Minimum purchase amount for this order is 12 USD
 ```
 
 > To know more about placeholders, please check [Sprintf-js Package](https://www.npmjs.com/package/sprintf-js#format-specification).
@@ -207,14 +210,14 @@ By default, The package will use the current locale code defined in the configur
 
 ```ts
 // somewhere in the app
-import { setCurrentLocaleCode } from '@mongez/localization';
+import { setCurrentLocaleCode } from "@mongez/localization";
 
 // if current locale code is ar
-trans('home'); // الصفحة الرئيسية
+trans("home"); // الصفحة الرئيسية
 
-setCurrentLocaleCode('en');
+setCurrentLocaleCode("en");
 
-trans('home'); // Home Page
+trans("home"); // Home Page
 ```
 
 ## Changing fallback locale code
@@ -223,9 +226,9 @@ Same applies in fallback locale code, it can be changed later from anywhere in y
 
 ```ts
 // somewhere in the app
-import { setFallbackLocaleCode } from '@mongez/localization';
+import { setFallbackLocaleCode } from "@mongez/localization";
 
-setFallbackLocaleCode('ar'); // Now fallback is changed to `ar`
+setFallbackLocaleCode("ar"); // Now fallback is changed to `ar`
 ```
 
 ## Getting Translations list
@@ -234,7 +237,7 @@ To get the entire translations list of all locale codes, use `getTranslationsLis
 
 ```ts
 // somewhere in the app
-import { getTranslationsList } from '@mongez/localization';
+import { getTranslationsList } from "@mongez/localization";
 
 getTranslationsList(); // something like {en: {home: 'Home Page'}, ar: {home: 'الصفحة الرئيسية'}}
 ```
@@ -243,9 +246,9 @@ To Get keywords list of certain locale code, use `getKeywordsListOf` function.
 
 ```ts
 // somewhere in the app
-import { getKeywordsListOf } from '@mongez/localization';
+import { getKeywordsListOf } from "@mongez/localization";
 
-getKeywordsListOf('en'); // something like {home: 'Home Page'}}
+getKeywordsListOf("en"); // something like {home: 'Home Page'}}
 ```
 
 ## Localization Events
@@ -254,33 +257,38 @@ You can be notified once a locale code is changed, or once the fallback locale c
 
 ```ts
 // somewhere in the app
-import { setCurrentLocaleCode, localizationEvents } from '@mongez/localization';
+import { setCurrentLocaleCode, localizationEvents } from "@mongez/localization";
 
-localizationEvents.onChange('localeCode', (newLocaleCode, oldLocaleCode) => {
-    console.log(newLocaleCode, oldLocaleCode); // en ar
+localizationEvents.onChange("localeCode", (newLocaleCode, oldLocaleCode) => {
+  console.log(newLocaleCode, oldLocaleCode); // en ar
 });
 
 // assuming current locale code is `ar`
-setCurrentLocaleCode('en'); // once calling the `setCurrentLocaleCode` the `onChange.localeCode` event will be triggered.
+setCurrentLocaleCode("en"); // once calling the `setCurrentLocaleCode` the `onChange.localeCode` event will be triggered.
 ```
 
 Fallback locale codes is also available to be detected once it is changed.
 
 ```ts
 // somewhere in the app
-import { setFallbackLocaleCode, localizationEvents } from '@mongez/localization';
+import {
+  setFallbackLocaleCode,
+  localizationEvents,
+} from "@mongez/localization";
 
-localizationEvents.onChange('fallback', (newLocaleCode, oldLocaleCode) => {
-    console.log(newLocaleCode, oldLocaleCode); // ar en
+localizationEvents.onChange("fallback", (newLocaleCode, oldLocaleCode) => {
+  console.log(newLocaleCode, oldLocaleCode); // ar en
 });
 
 // assuming current fallback locale code is `en`
-setFallbackLocaleCode('ar'); // once calling the `setFallbackLocaleCode` the `onChange.fallback` event will be triggered.
+setFallbackLocaleCode("ar"); // once calling the `setFallbackLocaleCode` the `onChange.fallback` event will be triggered.
 ```
 
 ## Change Log
 
-- 1.0.12 (06/01/2022)
+- 1.0.17 (8 Jun 2022)
+  - Added `sprintf-js` dependency.
+- 1.0.12 (06 Jan 2022)
   - Added [grouped translations](#grouped-translations)
   - Added [Translations list](#getting-translations-list)
 

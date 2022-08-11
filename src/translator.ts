@@ -34,7 +34,7 @@ export function getCurrentLocaleCode() {
  * @returns {void}
  */
 export function setCurrentLocaleCode(localeCode: string): void {
-  const oldLocaleCode: string = currentLocaleCode;
+  const oldLocaleCode = currentLocaleCode;
   currentLocaleCode = localeCode;
   localizationEvents.triggerChange("localeCode", localeCode, oldLocaleCode);
 }
@@ -78,7 +78,7 @@ export function getKeywordsListOf(localeCode: string): Keywords | null {
  * then check it in the faLLBACK locale code instead
  */
 export function setFallbackLocaleCode(fallbackLocale: string) {
-  const oldFallback: string = fallbackLocaleCode;
+  const oldFallback = fallbackLocaleCode;
 
   fallbackLocaleCode = fallbackLocale;
   localizationEvents.triggerChange("fallback", fallbackLocale, oldFallback);

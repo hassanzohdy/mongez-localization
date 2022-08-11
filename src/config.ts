@@ -29,10 +29,16 @@ export function setLocalizationConfigurations(
   }
 }
 
+/**
+ * Get current localization configurations list
+ */
 export function getLocalizationConfigurations(): LocalizationConfigurations {
   return localesConfig;
 }
 
+/**
+ * Get single value of the localization configurations list
+ */
 export function getLocaleConfig(
   key: keyof LocalizationConfigurations,
   defaultValue: any = null

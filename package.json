@@ -1,11 +1,12 @@
 {
     "name": "@mongez/localization",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "description": "A simple i18n localization handler for browsers and nodejs",
     "main": "src/index.ts",
     "author": "hassanzohdy",
     "dependencies": {
         "@mongez/events": "1.0.x",
+        "@mongez/reinforcements": "1.0.x",
         "sprintf-js": "^1.1.2"
     },
     "repository": {

@@ -102,8 +102,13 @@ export function trans(keyword: string, ...args: any[]) {
  * @returns
  */
 export function groupedTranslations(
-  groupedTranslations: GroupedTranslations
+  groupKey?: string | GroupedTranslations,
+  groupedTranslations?: GroupedTranslations
 ): void {
+  if (typeof groupKey !== "string" && !groupedTranslations) {
+    groupedTranslations = groupKey;
+  }
+
   for (const keyword in groupedTranslations) {
     const translations = groupedTranslations[keyword];
     for (const localeCode in translations) {
@@ -111,7 +116,15 @@ export function groupedTranslations(
         translationsList[localeCode] = {};
       }
 
-      translationsList[localeCode][keyword] = translations[localeCode];
+      if (groupKey) {
+        Obj.set(
+          translationsList,
+          `${localeCode}.${groupKey}.${keyword}`,
+          translations[localeCode]
+        );
+      } else {
+        translationsList[localeCode][keyword] = translations[localeCode];
+      }
     }
   }
 }

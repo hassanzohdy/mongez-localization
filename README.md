@@ -168,6 +168,28 @@ groupedTranslations({
 });
 ```
 
+You can also specify a group name (`dot.notation-syntax is allowed as well`) by sending 2nd argument to the function
+
+> Added in 1.0.19
+
+```ts
+// src/locales/localization.ts
+import { groupedTranslations } from "@mongez/localization";
+
+groupedTranslations('store', {
+  orders: {
+    en: "Orders",
+    ar: "الطلبات",
+  },
+  products: {
+    en: "Products",
+    ar: "المنتجات",
+  },
+});
+
+trans('store.orders'); // Products
+```
+
 ## Translation placeholders
 
 Another powerful feature is to set a placeholder that can be modified dynamically based on the given value.
@@ -286,10 +308,11 @@ setFallbackLocaleCode("ar"); // once calling the `setFallbackLocaleCode` the `on
 
 ## Change Log
 
+- 1.0.19 (23 Aug 2022)
+  - Now [grouped translations](#grouped-translations) accepts `groupKey`
 - 1.0.17 (8 Jun 2022)
   - Added `sprintf-js` dependency.
 - 1.0.12 (06 Jan 2022)
-  - Added [grouped translations](#grouped-translations)
   - Added [Translations list](#getting-translations-list)
 
 ## TODO

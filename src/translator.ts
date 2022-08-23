@@ -107,6 +107,7 @@ export function groupedTranslations(
 ): void {
   if (typeof groupKey !== "string" && !groupedTranslations) {
     groupedTranslations = groupKey;
+    groupKey = undefined;
   }
 
   for (const keyword in groupedTranslations) {

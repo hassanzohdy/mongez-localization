@@ -3,7 +3,7 @@
  */
 export function converter(translation: string, placeholders: any) {
   const expression = `(${Object.keys(placeholders)
-    .map((key) => (key.startsWith(":") ? key : ":" + key))
+    .map(key => (key.startsWith(":") ? key : ":" + key))
     .join("|")})`;
 
   const regex = new RegExp(expression, "g");

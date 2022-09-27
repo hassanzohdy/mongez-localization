@@ -421,11 +421,40 @@ localizationEvents.onChange("fallback", (newLocaleCode, oldLocaleCode) => {
 setFallbackLocaleCode("ar"); // once calling the `setFallbackLocaleCode` the `onChange.fallback` event will be triggered.
 ```
 
+## Testing
+
+To run tests, run the following command
+
+```bash
+npm run test
+```
+
+OR
+
+```bash
+yarn test
+```
+
+## Contributing
+
+Contributions, issues and feature requests are welcome!.
+
+If you're going to make a pull request, please make sure to follow the next steps:
+
+1. Fork the repository
+2. Create your feature branch (git checkout -b feature/AmazingFeature)
+3. Commit your changes (git commit -m 'Add some AmazingFeature')
+4. Make sure to add tests for your changes
+5. Run tests (yarn test)
+6. Push to the branch (git push origin feature/AmazingFeature)
+7. Open a pull request
+
 ## Change Log
 
 - 2.0.0 (27 Sept 2022)
   - Added Converters for placeholders, as translation now supports jsx for replacements.
   - Removed `sprintf-js` package.
+  - Added Unit tests
 - 1.0.19 (23 Aug 2022)
   - Now [grouped translations](#grouped-translations) accepts `groupKey`
 - 1.0.17 (8 Jun 2022)

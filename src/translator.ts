@@ -59,7 +59,7 @@ export function setCurrentLocaleCode(localeCode: string): void {
 export function extend(localeCode: string, keywords: Keywords) {
   translationsList[localeCode] = Obj.merge(
     translationsList[localeCode] || {},
-    keywords
+    keywords,
   ) as Keywords;
 }
 
@@ -68,7 +68,7 @@ export function extend(localeCode: string, keywords: Keywords) {
  */
 export function groupedTranslations(
   groupKey?: string | GroupedTranslations,
-  groupedTranslations?: GroupedTranslations
+  groupedTranslations?: GroupedTranslations,
 ): void {
   if (typeof groupKey !== "string" && !groupedTranslations) {
     groupedTranslations = groupKey;
@@ -86,7 +86,7 @@ export function groupedTranslations(
         Obj.set(
           translationsList,
           `${localeCode}.${groupKey}.${keyword}`,
-          translations[localeCode]
+          translations[localeCode],
         );
       } else {
         translationsList[localeCode][keyword] = translations[localeCode];
@@ -142,9 +142,9 @@ export function transFrom(
   localeCode: string,
   keyword: string,
   placeholders?: any,
-  converter = currentConverter
+  converter = currentConverter,
 ) {
-  let translation =
+  const translation =
     Obj.get(translationsList, `${localeCode}.${keyword}`) ||
     (fallbackLocaleCode
       ? Obj.get(translationsList, `${fallbackLocaleCode}.${keyword}`)

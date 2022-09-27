@@ -1,5 +1,5 @@
-import { LocaleCodeChangeCallback, LocalizationEventName } from "./types";
 import events, { EventSubscription } from "@mongez/events";
+import { LocaleCodeChangeCallback, LocalizationEventName } from "./types";
 
 const BASE_LOCALIZATION_CHANGE_EVENT = "localization.change";
 
@@ -7,21 +7,21 @@ export const localizationEvents = {
   triggerChange(
     eventName: LocalizationEventName,
     newLocaleCode: string,
-    oldLocaleCode: string
+    oldLocaleCode: string,
   ): void {
     events.trigger(
       BASE_LOCALIZATION_CHANGE_EVENT + "." + eventName,
       newLocaleCode,
-      oldLocaleCode
+      oldLocaleCode,
     );
   },
   onChange(
     eventName: LocalizationEventName,
-    callback: LocaleCodeChangeCallback
+    callback: LocaleCodeChangeCallback,
   ): EventSubscription {
     return events.subscribe(
       BASE_LOCALIZATION_CHANGE_EVENT + "." + eventName,
-      callback
+      callback,
     );
   },
 };

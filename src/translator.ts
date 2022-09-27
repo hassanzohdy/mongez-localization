@@ -1,5 +1,5 @@
 import { Obj } from "@mongez/reinforcements";
-import { converter, jsxConverter } from "./converters";
+import { converter } from "./converters";
 import { localizationEvents } from "./events";
 import {
   Converter,
@@ -132,13 +132,6 @@ export function setFallbackLocaleCode(fallbackLocale: string) {
  */
 export function trans(keyword: string, placeholders?: any) {
   return transFrom(currentLocaleCode, keyword, placeholders);
-}
-
-/**
- * Translate for jsx
- */
-export function transX(keyword: string, placeholders?: any) {
-  return transFrom(currentLocaleCode, keyword, placeholders, jsxConverter);
 }
 
 /**

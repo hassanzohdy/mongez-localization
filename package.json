@@ -1,6 +1,6 @@
 {
     "name": "@mongez/react-localization",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A simple i18n localization handler for React Js and React Native",
     "main": "src/index.ts",
     "author": "hassanzohdy",

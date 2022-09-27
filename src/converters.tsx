@@ -19,9 +19,7 @@ export function jsxConverter(translation: string, placeholders: any) {
       }
 
       return (
-        <React.Fragment key={part}>
-          ${placeholders[part] || part}
-        </React.Fragment>
+        <React.Fragment key={part}>{placeholders[part] || part}</React.Fragment>
       );
     });
 }

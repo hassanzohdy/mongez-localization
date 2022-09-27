@@ -1,15 +1,12 @@
 {
-    "name": "@mongez/localization",
-    "version": "2.0.1",
-    "description": "A simple i18n localization handler for browsers and nodejs",
+    "name": "@mongez/react-localization",
+    "version": "1.0.0",
+    "description": "A simple i18n localization handler for React Js and React Native",
     "main": "src/index.ts",
     "author": "hassanzohdy",
-    "dependencies": {
-        "@mongez/events": "1.0.x",
-        "@mongez/reinforcements": "1.0.x"
-    },
     "peerDependencies": {
-        "react": ">=16.8.0"
+        "react": ">=16.8.0",
+        "@mongez/localization": ">=2.0.0"
     },
     "repository": {
         "type": "git",
@@ -22,8 +19,9 @@
         "jsx",
         "translation",
         "language",
-        "browser",
-        "nodejs",
+        "react",
+        "reactjs",
+        "react-native",
         "mongez"
     ],
     "license": "MIT"

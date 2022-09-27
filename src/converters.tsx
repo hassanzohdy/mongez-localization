@@ -1,3 +1,5 @@
+import React from "react";
+
 /**
  * Convert the placeholders for the given translation
  */
@@ -31,6 +33,10 @@ export function jsxConverter(translation: string, placeholders: any) {
         part = part.substring(1);
       }
 
-      return placeholders[part] || part;
+      return (
+        <React.Fragment key={part}>
+          ${placeholders[part] || part}
+        </React.Fragment>
+      );
     });
 }

@@ -36,10 +36,14 @@ export type LocalizationEventName = "localeCode" | "fallback";
 export type LocalizationConfigurations = {
   /**
    * Default locale code
+   *
+   * @default en
    */
   defaultLocaleCode?: string;
   /**
    * Fall back locale code
+   *
+   * @default en
    */
   fallback?: string;
   /**

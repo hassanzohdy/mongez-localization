@@ -11,7 +11,7 @@ import {
 /**
  * Current locale code
  */
-let currentLocaleCode: string;
+let currentLocaleCode: string = "en";
 
 /**
  * Current converter
@@ -26,7 +26,7 @@ let translationsList: TranslationsList = {};
 /**
  * Current fall back locale code
  */
-let fallbackLocaleCode: string;
+let fallbackLocaleCode: string = "en";
 
 /**
  * Get current locale code

@@ -38,10 +38,14 @@ const translations: TranslationsList = {
 setLocalizationConfigurations({
   /**
    * Default locale code
+   * 
+   * @default en
    */
   defaultLocaleCode: "ar",
   /**
    * Fall back locale code
+   * 
+   * @default en
    */
   fallback: "en",
   /**
@@ -137,10 +141,14 @@ import { setLocalizationConfigurations } from "@mongez/localization";
 setLocalizationConfigurations({
   /**
    * Default locale code
+   *
+   * @default en
    */
   defaultLocaleCode: "ar",
   /**
    * Fall back locale code
+   *
+   * @default en
    */
   fallback: "en",
 });
@@ -242,10 +250,14 @@ import { jsxConverter, setLocalizationConfigurations } from "@mongez/localizatio
 setLocalizationConfigurations({
   /**
    * Default locale code
+   *
+   * @default en
    */
   defaultLocaleCode: "ar",
   /**
    * Fall back locale code
+   *
+   * @default en
    */
   fallback: "en",
   /**
@@ -265,10 +277,14 @@ import { setLocalizationConfigurations } from "@mongez/localization";
 setLocalizationConfigurations({
   /**
    * Default locale code
+   *
+   * @default en
    */
   defaultLocaleCode: "ar",
   /**
    * Fall back locale code
+   *
+   * @default en
    */
   fallback: "en",
   /**

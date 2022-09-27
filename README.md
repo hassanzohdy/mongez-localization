@@ -192,6 +192,8 @@ trans('store.orders'); // Products
 
 ## Translation placeholders
 
+> Updated in v2.0
+
 Another powerful feature is to set a placeholder that can be modified dynamically based on the given value.
 
 ```ts
@@ -199,32 +201,119 @@ Another powerful feature is to set a placeholder that can be modified dynamicall
 import { extend } from "@mongez/localization";
 
 extend("en", {
-  createItem: "Create New %s",
-  minimumOrderPurchase: "Minimum purchase amount for this order is %d USD",
+  createItem: "Create New :item",
+  minimumOrderPurchase: "Minimum purchase amount for this order is :amount USD",
 });
 ```
 
-Now we defined two keywords, `createItem` and `minimumOrderPurchase`, in the `createItem` keyword there is a placeholder `%s`, this placeholder means that there will be a text that replace this placeholder when calling the translation function, let's see it in action.
+Now we defined two keywords, `createItem` and `minimumOrderPurchase`, in the `createItem` keyword there is a placeholder `:item`, this placeholder means that there will be a text that replace this placeholder when calling the translation function, let's see it in action.
 
 ```ts
 // somewhere in the app
 import { trans } from "@mongez/localization";
 
-trans("createItem", "Order"); // Create New Order
-trans("createItem", "Customer"); // Create New Customer
-trans("createItem", "Category"); // Create New Category
+trans("createItem", { item: 'Order' }); // Create New Order
+trans("createItem", { item: 'Customer' }); // Create New Customer
+trans("createItem", { item: "Category" }); // Create New Category
 ```
 
-As easy as that!, now let's see the other keyword `minimumOrderPurchase` it contains `%d` placeholder, that means this placeholder will be replaced with an `integer` value.
+As easy as that!, now let's see the other keyword `minimumOrderPurchase` it contains `:amount` placeholder, that means this placeholder will be replaced with a value.
+
+> Please note that using `:` with keywords might make conflicts if it appears to be needed remained, so pickup a different word instead for the placeholder.
 
 ```ts
 // somewhere in the app
 import { trans } from "@mongez/localization";
 
-trans("minimumOrderPurchase", 12); // Minimum purchase amount for this order is 12 USD
+trans("minimumOrderPurchase", { amount: 12 }); // Minimum purchase amount for this order is 12 USD
 ```
 
-> To know more about placeholders, please check [Sprintf-js Package](https://www.npmjs.com/package/sprintf-js#format-specification).
+### JSX Placeholders
+
+> Added in V2.0
+
+You might also specify the placeholder to be a jsx element instead of just a string or an integer, this will drive us to set a converter function in our configurations to allow jsx elements.
+
+```ts
+// src/config/localization.ts
+
+import { jsxConverter, setLocalizationConfigurations } from "@mongez/localization";
+
+setLocalizationConfigurations({
+  /**
+   * Default locale code
+   */
+  defaultLocaleCode: "ar",
+  /**
+   * Fall back locale code
+   */
+  fallback: "en",
+  /**
+   * Converter function to convert the placeholder value to jsx element
+   */
+  converter: jsxConverter,
+});
+```
+
+You might also use your own converter function, the converter function receives the translated string and the placeholders list
+
+```ts
+// src/config/localization.ts
+
+import { setLocalizationConfigurations } from "@mongez/localization";
+
+setLocalizationConfigurations({
+  /**
+   * Default locale code
+   */
+  defaultLocaleCode: "ar",
+  /**
+   * Fall back locale code
+   */
+  fallback: "en",
+  /**
+   * Converter function to convert the placeholder value to jsx element
+   */
+  converter: (translatedString: string, placeholders: any) => {
+    // do something with the translated string and the placeholders
+    return translatedString;
+  },
+});
+```
+
+```tsx
+import { trans } from '@mongez/localization';
+
+export function RedComponent() {
+  return (
+    <>
+      {trans('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
+    </strong>
+  )
+}
+```
+
+Keep in mind that the return value for the `trans` function will be an array not a string.
+
+### Using jsx without converter
+
+You can use use the translation text with jsx by using `transX` function instead of `trans` this will always use the `jsxConverter` unlike the `trans` method which uses the converter from the defined configurations list.
+
+```tsx
+import { trans, transX } from '@mongez/localization';
+
+export function RedComponent() {
+  return (
+    <>
+      // will convert the jsx value to [object Object] if the converter is not set to jsxConverter in the configurations.
+      {trans('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
+
+      // works fine regardless configurations.
+      {transX('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
+    </strong>
+  )
+}
+```
 
 ## Changing Current Locale Code
 
@@ -308,6 +397,9 @@ setFallbackLocaleCode("ar"); // once calling the `setFallbackLocaleCode` the `on
 
 ## Change Log
 
+- 2.0.0 (27 Sept 2022)
+  - Added Converters for placeholders, as translation now supports jsx for replacements.
+  - Removed `sprintf-js` package.
 - 1.0.19 (23 Aug 2022)
   - Now [grouped translations](#grouped-translations) accepts `groupKey`
 - 1.0.17 (8 Jun 2022)

@@ -7,6 +7,11 @@ export type TranslationsList = {
 };
 
 /**
+ * Converter type
+ */
+export type Converter = (keyword: string, placeholders: any) => any;
+
+/**
  * Translation keywords list
  * key is the common key that will be used among different languages
  * its value is either a string or another list of keywords a.k.a an object.
@@ -41,6 +46,10 @@ export type LocalizationConfigurations = {
    * Set translations list
    */
   translations?: TranslationsList;
+  /**
+   * Set placeholder converter
+   */
+  converter?: Converter;
 };
 
 /**

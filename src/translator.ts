@@ -1,12 +1,22 @@
-import { vsprintf } from "sprintf-js";
-import { localizationEvents } from "./events";
 import { Obj } from "@mongez/reinforcements";
-import { GroupedTranslations, Keywords, TranslationsList } from "./types";
+import { converter, jsxConverter } from "./converters";
+import { localizationEvents } from "./events";
+import {
+  Converter,
+  GroupedTranslations,
+  Keywords,
+  TranslationsList,
+} from "./types";
 
 /**
  * Current locale code
  */
 let currentLocaleCode: string;
+
+/**
+ * Current converter
+ */
+let currentConverter: Converter = converter;
 
 /**
  * all keywords for all locale codes
@@ -28,10 +38,14 @@ export function getCurrentLocaleCode() {
 }
 
 /**
+ * Set current converter
+ */
+export function setConverter(converter: Converter) {
+  currentConverter = converter;
+}
+
+/**
  * Set current locale code
- *
- * @param  {string} localeCode
- * @returns {void}
  */
 export function setCurrentLocaleCode(localeCode: string): void {
   const oldLocaleCode = currentLocaleCode;
@@ -41,15 +55,44 @@ export function setCurrentLocaleCode(localeCode: string): void {
 
 /**
  * Add keywords
- *
- * @param  {object} keywords
- * @returns {void}
  */
 export function extend(localeCode: string, keywords: Keywords) {
   translationsList[localeCode] = Obj.merge(
     translationsList[localeCode] || {},
     keywords
   ) as Keywords;
+}
+
+/**
+ * Create a grouped translations based on keyword, each keyword contains list of locale codes and beside it its corresponding translation
+ */
+export function groupedTranslations(
+  groupKey?: string | GroupedTranslations,
+  groupedTranslations?: GroupedTranslations
+): void {
+  if (typeof groupKey !== "string" && !groupedTranslations) {
+    groupedTranslations = groupKey;
+    groupKey = undefined;
+  }
+
+  for (const keyword in groupedTranslations) {
+    const translations = groupedTranslations[keyword];
+    for (const localeCode in translations) {
+      if (!translationsList[localeCode]) {
+        translationsList[localeCode] = {};
+      }
+
+      if (groupKey) {
+        Obj.set(
+          translationsList,
+          `${localeCode}.${groupKey}.${keyword}`,
+          translations[localeCode]
+        );
+      } else {
+        translationsList[localeCode][keyword] = translations[localeCode];
+      }
+    }
+  }
 }
 
 /**
@@ -86,64 +129,35 @@ export function setFallbackLocaleCode(fallbackLocale: string) {
 
 /**
  * Translate the given keyword in current locale code
- *
- * @param   {string} keyword
- * @returns {any}
  */
-export function trans(keyword: string, ...args: any[]) {
-  return transFrom(currentLocaleCode, keyword, ...args);
+export function trans(keyword: string, placeholders?: any) {
+  return transFrom(currentLocaleCode, keyword, placeholders);
 }
 
 /**
- * Create a grouped translations based on keyword, each keyword contains list of locale codes and beside it its corresponding translation
- * @param localeCode
- * @param keyword
- * @param args
- * @returns
+ * Translate for jsx
  */
-export function groupedTranslations(
-  groupKey?: string | GroupedTranslations,
-  groupedTranslations?: GroupedTranslations
-): void {
-  if (typeof groupKey !== "string" && !groupedTranslations) {
-    groupedTranslations = groupKey;
-    groupKey = undefined;
-  }
-
-  for (const keyword in groupedTranslations) {
-    const translations = groupedTranslations[keyword];
-    for (const localeCode in translations) {
-      if (!translationsList[localeCode]) {
-        translationsList[localeCode] = {};
-      }
-
-      if (groupKey) {
-        Obj.set(
-          translationsList,
-          `${localeCode}.${groupKey}.${keyword}`,
-          translations[localeCode]
-        );
-      } else {
-        translationsList[localeCode][keyword] = translations[localeCode];
-      }
-    }
-  }
+export function transX(keyword: string, placeholders?: any) {
+  return transFrom(currentLocaleCode, keyword, placeholders, jsxConverter);
 }
 
 /**
  * Translate the given keyword for the given locale code
- *
  * Please note this method accepts dot notation syntax
- *
- * @param   {string} key
- * @returns {any}
  */
-export function transFrom(localeCode: string, keyword: string, ...args: any[]) {
+export function transFrom(
+  localeCode: string,
+  keyword: string,
+  placeholders?: any,
+  converter = currentConverter
+) {
   let translation =
     Obj.get(translationsList, `${localeCode}.${keyword}`) ||
     (fallbackLocaleCode
       ? Obj.get(translationsList, `${fallbackLocaleCode}.${keyword}`)
       : null);
 
-  return translation ? vsprintf(translation, args) || keyword : keyword;
+  if (!translation) return keyword;
+
+  return placeholders ? converter(translation, placeholders) : translation;
 }

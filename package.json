@@ -1,17 +1,27 @@
 {
     "name": "@mongez/localization",
-    "version": "1.0.20",
+    "version": "2.0.0",
     "description": "A simple i18n localization handler for browsers and nodejs",
     "main": "src/index.ts",
     "author": "hassanzohdy",
     "dependencies": {
         "@mongez/events": "1.0.x",
-        "@mongez/reinforcements": "1.0.x",
-        "sprintf-js": "^1.1.2"
+        "@mongez/reinforcements": "1.0.x"
     },
     "repository": {
         "type": "git",
         "url": ""
     },
+    "keywords": [
+        "i18n",
+        "localization",
+        "trans",
+        "jsx",
+        "translation",
+        "language",
+        "browser",
+        "nodejs",
+        "mongez"
+    ],
     "license": "MIT"
 }

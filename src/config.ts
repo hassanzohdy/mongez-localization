@@ -1,10 +1,11 @@
 import { Obj } from "@mongez/reinforcements";
-import { LocalizationConfigurations } from "./types";
 import {
+  setConverter,
   setCurrentLocaleCode,
   setFallbackLocaleCode,
   setTranslationsList,
 } from "./translator";
+import { LocalizationConfigurations } from "./types";
 
 let localesConfig: LocalizationConfigurations = {};
 
@@ -18,6 +19,10 @@ export function setLocalizationConfigurations(
 
   if (configurationsList.translations) {
     setTranslationsList(configurationsList.translations);
+  }
+
+  if (configurationsList.converter) {
+    setConverter(configurationsList.converter);
   }
 
   if (configurationsList.fallback) {

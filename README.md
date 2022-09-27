@@ -236,16 +236,25 @@ import { trans } from "@mongez/localization";
 trans("minimumOrderPurchase", { amount: 12 }); // Minimum purchase amount for this order is 12 USD
 ```
 
-### JSX Placeholders
+### React JSX Placeholders
 
 > Added in V2.0
 
 You might also specify the placeholder to be a jsx element instead of just a string or an integer, this will drive us to set a converter function in our configurations to allow jsx elements.
 
+But we need to install the converter first
+
+`npm i @mongez/react-localization`
+
+OR
+
+`yarn add @mongez/react-localization`
+
 ```ts
 // src/config/localization.ts
 
-import { jsxConverter, setLocalizationConfigurations } from "@mongez/localization";
+import { jsxConverter } from "@mongez/react-localization";
+import { setLocalizationConfigurations } from "@mongez/localization";
 
 setLocalizationConfigurations({
   /**
@@ -316,7 +325,8 @@ Keep in mind that the return value for the `trans` function will be an array not
 You can use use the translation text with jsx by using `transX` function instead of `trans` this will always use the `jsxConverter` unlike the `trans` method which uses the converter from the defined configurations list.
 
 ```tsx
-import { trans, transX } from '@mongez/localization';
+import { trans } from '@mongez/localization';
+import { transX } from "@mongez/react-localization";
 
 export function RedComponent() {
   return (

@@ -1,12 +1,12 @@
 {
     "name": "@mongez/localization",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "description": "A simple i18n localization handler for browsers and nodejs",
     "main": "src/index.ts",
     "author": "hassanzohdy",
     "dependencies": {
         "@mongez/events": "1.0.x",
-        "@mongez/reinforcements": "1.0.x"
+        "@mongez/reinforcements": "2.0.x"
     },
     "scripts": {
         "fix:test": "eslint --fix -c ./.eslintrc.json ./tests",

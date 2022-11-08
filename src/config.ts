@@ -1,4 +1,4 @@
-import { Obj } from "@mongez/reinforcements";
+import { get, merge } from "@mongez/reinforcements";
 import {
   setConverter,
   setCurrentLocaleCode,
@@ -13,9 +13,9 @@ let localesConfig: LocalizationConfigurations = {};
  * Initiate localization configurations
  */
 export function setLocalizationConfigurations(
-  configurationsList: LocalizationConfigurations
+  configurationsList: LocalizationConfigurations,
 ) {
-  localesConfig = Obj.merge(localesConfig, configurationsList);
+  localesConfig = merge(localesConfig, configurationsList);
 
   if (configurationsList.translations) {
     setTranslationsList(configurationsList.translations);
@@ -46,7 +46,7 @@ export function getLocalizationConfigurations(): LocalizationConfigurations {
  */
 export function getLocaleConfig(
   key: keyof LocalizationConfigurations,
-  defaultValue: any = null
+  defaultValue: any = null,
 ): any {
-  return Obj.get(localesConfig, key, defaultValue);
+  return get(localesConfig, key, defaultValue);
 }

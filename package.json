@@ -1,6 +1,6 @@
 {
     "name": "@mongez/localization",
-    "version": "2.0.8",
+    "version": "2.0.9",
     "description": "A simple i18n localization handler for browsers and nodejs",
     "main": "src/index.ts",
     "author": "hassanzohdy",

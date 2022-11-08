@@ -1,4 +1,4 @@
-import { Obj } from "@mongez/reinforcements";
+import { get, merge, set } from "@mongez/reinforcements";
 import { converter } from "./converters";
 import { localizationEvents } from "./events";
 import {
@@ -57,7 +57,7 @@ export function setCurrentLocaleCode(localeCode: string): void {
  * Add keywords
  */
 export function extend(localeCode: string, keywords: Keywords) {
-  translationsList[localeCode] = Obj.merge(
+  translationsList[localeCode] = merge(
     translationsList[localeCode] || {},
     keywords,
   ) as Keywords;
@@ -83,7 +83,7 @@ export function groupedTranslations(
       }
 
       if (groupKey) {
-        Obj.set(
+        set(
           translationsList,
           `${localeCode}.${groupKey}.${keyword}`,
           translations[localeCode],
@@ -145,9 +145,9 @@ export function transFrom(
   converter = currentConverter,
 ) {
   const translation =
-    Obj.get(translationsList, `${localeCode}.${keyword}`) ||
+    get(translationsList, `${localeCode}.${keyword}`) ||
     (fallbackLocaleCode
-      ? Obj.get(translationsList, `${fallbackLocaleCode}.${keyword}`)
+      ? get(translationsList, `${fallbackLocaleCode}.${keyword}`)
       : null);
 
   if (!translation) return keyword;

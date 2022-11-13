@@ -130,8 +130,19 @@ export function setFallbackLocaleCode(fallbackLocale: string) {
 /**
  * Translate the given keyword in current locale code
  */
-export function trans(keyword: string, placeholders?: any) {
-  return transFrom(currentLocaleCode, keyword, placeholders);
+export function trans(
+  keyword: string,
+  placeholders?: any,
+  converter: Converter = currentConverter,
+) {
+  return transFrom(currentLocaleCode, keyword, placeholders, converter);
+}
+
+/**
+ * Translate using the default converter
+ */
+export function plainTrans(keyword: string, placeholders?: any) {
+  return transFrom(currentLocaleCode, keyword, placeholders, converter);
 }
 
 /**

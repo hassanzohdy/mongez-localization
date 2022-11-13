@@ -618,12 +618,17 @@
   resolved "https://registry.yarnpkg.com/@mongez/events/-/events-1.0.9.tgz#8d9c3d3830c5973740b76869ac3a08d64a7fbdbc"
   integrity sha512-6vJaOeG6RE2Tzv9MsWVfBAqr5K/qESpymhlTPca5qs0bX4MGhHxAcBthhqByf6MJlAXwTGbBzoe9kmE6wGp3VA==
 
-"@mongez/reinforcements@1.0.x":
-  version "1.0.28"
-  resolved "https://registry.yarnpkg.com/@mongez/reinforcements/-/reinforcements-1.0.28.tgz#c6298e07e4267ab4092ecd936c6bbee5a3c51e21"
-  integrity sha512-Pv5Bj5/8u0i3TAoz0mfjizNup758uMt/NHM4C3ZyfaqCAZU7OiOGclgy2x/dbln0U26akNhl72cLqQm967MWhA==
+"@mongez/reinforcements@2.x.x":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@mongez/reinforcements/-/reinforcements-2.2.3.tgz#825228ce3017650613a47e504d20e03686956d6d"
+  integrity sha512-6mKUQvAE6jRWiJmC/Q459NFKVF594APtAXjeyVMf+jJBikvbF1xlvajshjWNdJXZcwA0Wn3BWv65Fd/LOYt9/A==
   dependencies:
-    immutable "^4.1.0"
+    "@mongez/supportive-is" "^1.0.6"
+
+"@mongez/supportive-is@^1.0.6":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@mongez/supportive-is/-/supportive-is-1.0.9.tgz#c20dc9eb8c0db9dfdbfd73f83ed49d5552f92d1c"
+  integrity sha512-6ejPqrcSlZbazndWg822lcDqfBcMtvYbhvxRef+KzG6faT38Kc8JVj7JHcIGyBMPEPrjr88Lk+O64XnxKBzZrg==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1569,11 +1574,6 @@ ignore@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
   integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
-
-immutable@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.1.0.tgz#f795787f0db780183307b9eb2091fcac1f6fafef"
-  integrity sha512-oNkuqVTA8jqG1Q6c+UglTOD1xhC1BtjKI7XkCXRkZHrN5m18/XsnUp8Q89GkQO/z+0WjonSvl0FLhDYftp46nQ==
 
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.3.0"

@@ -341,6 +341,18 @@ export function RedComponent() {
 }
 ```
 
+## Using Plain Converter
+
+> Added in v2.0.10
+
+You can use the plain converter directly regardless current converter using `plainTrans` function.
+
+```ts
+import { plainTrans } from "@mongez/localization";
+
+plainTrans("minimumOrderPurchase", { amount: 12 }); // Minimum purchase amount for this order is 12 USD
+```
+
 ## Changing Current Locale Code
 
 By default, The package will use the current locale code defined in the configurations list, but we can change current locale code later in the project for example when a locale code is changed to a new locale code using `setCurrentLocaleCode` function.
@@ -421,18 +433,18 @@ localizationEvents.onChange("fallback", (newLocaleCode, oldLocaleCode) => {
 setFallbackLocaleCode("ar"); // once calling the `setFallbackLocaleCode` the `onChange.fallback` event will be triggered.
 ```
 
-## Testing
+## Tests
 
 To run tests, run the following command
 
 ```bash
-npm run test
+yarn test
 ```
 
 OR
 
 ```bash
-yarn test
+npm run test
 ```
 
 ## Contributing
@@ -451,6 +463,8 @@ If you're going to make a pull request, please make sure to follow the next step
 
 ## Change Log
 
+- 2.0.10 (13 Nov 2022)
+  - Added `plainTrans` function.
 - 2.0.0 (27 Sept 2022)
   - Added Converters for placeholders, as translation now supports jsx for replacements.
   - Removed `sprintf-js` package.

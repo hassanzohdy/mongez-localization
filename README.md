@@ -380,6 +380,28 @@ import { setFallbackLocaleCode } from "@mongez/localization";
 setFallbackLocaleCode("ar"); // Now fallback is changed to `ar`
 ```
 
+## Getting current locale code
+
+You can get current locale code using `getCurrentLocaleCode` function.
+
+```ts
+// somewhere in the app
+import { getCurrentLocaleCode } from "@mongez/localization";
+
+getCurrentLocaleCode(); // ar
+```
+
+## Getting fallback locale code
+
+You can get fallback locale code using `getFallbackLocaleCode` function.
+
+```ts
+// somewhere in the app
+import { getFallbackLocaleCode } from "@mongez/localization";
+
+getFallbackLocaleCode(); // en
+```
+
 ## Getting Translations list
 
 To get the entire translations list of all locale codes, use `getTranslationsList` function.
@@ -463,6 +485,8 @@ If you're going to make a pull request, please make sure to follow the next step
 
 ## Change Log
 
+- 2.0.11 (28 Nov 2022)
+  - Added [Get fallback locale code function](#getting-fallback-locale-code)
 - 2.0.10 (13 Nov 2022)
   - Added `plainTrans` function.
 - 2.0.0 (27 Sept 2022)

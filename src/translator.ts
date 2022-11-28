@@ -30,11 +30,16 @@ let fallbackLocaleCode: string = "en";
 
 /**
  * Get current locale code
- *
- * @returns {string}
  */
 export function getCurrentLocaleCode() {
   return currentLocaleCode;
+}
+
+/**
+ * Get fallback locale code
+ */
+export function getFallbackLocaleCode() {
+  return fallbackLocaleCode;
 }
 
 /**

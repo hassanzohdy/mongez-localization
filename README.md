@@ -353,6 +353,46 @@ import { plainTrans } from "@mongez/localization";
 plainTrans("minimumOrderPurchase", { amount: 12 }); // Minimum purchase amount for this order is 12 USD
 ```
 
+## Translate from an object
+
+> Added in v2.1.0
+
+Now `trans` and `transFrom` functions can receive keyword as a `string` or an object of locale codes and their translations.
+
+```ts
+// src/locales/en.ts
+import { trans, transFrom } from "@mongez/localization";
+
+const translations = {
+  home: {
+    en: "Home Page",
+    ar: "الصفحة الرئيسية",
+  }
+};
+
+trans(translations.home); // Home Page (based on current locale code)
+
+// Or using transFrom function
+transFrom('en', translations.home); // Home Page (based on current locale code
+```
+
+If the given locale code does not exist in the given object, the `fallback` locale code will be used instead.
+
+The main reason behind adding this feature is to allow us to use the same keyword in different files, for example, we have a file called `home.ts` that contains the translations for the home page, and we have another file called `dashboard.ts` that contains the translations for the dashboard page, and both files have a keyword called `home`, so we can use the same keyword in both files without conflicts.
+
+```ts
+// Dashboard Page
+import { trans } from '@mongez/localization';
+import dashboardTranslation from './dashboard';
+import frontOfficeTranslation from './front-office';
+
+trans(dashboardTranslation.home); // Dashboard
+
+trans(frontOfficeTranslation.home); // Home Page
+```
+
+This can be useful as mentioned earlier, but if you registered these files using `groupedTranslations` function, the last added keyword will be used when using the dynamic string i.e `trans('home')`.
+
 ## Changing Current Locale Code
 
 By default, The package will use the current locale code defined in the configurations list, but we can change current locale code later in the project for example when a locale code is changed to a new locale code using `setCurrentLocaleCode` function.
@@ -485,6 +525,8 @@ If you're going to make a pull request, please make sure to follow the next step
 
 ## Change Log
 
+- 2.1.0 (15 Feb 2023)
+  - Now `trans` and `transFrom` function accepts `keyword` as **string** or **object**  
 - 2.0.11 (28 Nov 2022)
   - Added [Get fallback locale code function](#getting-fallback-locale-code)
 - 2.0.10 (13 Nov 2022)

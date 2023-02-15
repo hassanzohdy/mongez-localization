@@ -5,6 +5,7 @@ import {
   Converter,
   GroupedTranslations,
   Keywords,
+  Translatable,
   TranslationsList,
 } from "./types";
 
@@ -136,7 +137,7 @@ export function setFallbackLocaleCode(fallbackLocale: string) {
  * Translate the given keyword in current locale code
  */
 export function trans(
-  keyword: string,
+  keyword: Translatable,
   placeholders?: any,
   converter: Converter = currentConverter,
 ) {
@@ -156,10 +157,13 @@ export function plainTrans(keyword: string, placeholders?: any) {
  */
 export function transFrom(
   localeCode: string,
-  keyword: string,
+  keyword: Translatable,
   placeholders?: any,
   converter = currentConverter,
 ) {
+  if (typeof keyword !== "string") {
+    keyword = keyword[localeCode] || keyword[fallbackLocaleCode];
+  }
   const translation =
     get(translationsList, `${localeCode}.${keyword}`) ||
     (fallbackLocaleCode

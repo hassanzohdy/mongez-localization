@@ -25,7 +25,7 @@ export type Keywords = {
  */
 export type LocaleCodeChangeCallback = (
   newLocaleCode: string,
-  oldLocaleCode: string
+  oldLocaleCode: string,
 ) => void;
 
 /**
@@ -65,3 +65,12 @@ export type GroupedTranslations = {
     [localeCode: string]: string;
   };
 };
+
+/**
+ * Translatable type
+ */
+export type Translatable =
+  | string
+  | {
+      [localeCode: string]: string;
+    };

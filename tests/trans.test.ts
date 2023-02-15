@@ -53,4 +53,41 @@ describe("localization/trans", () => {
     expect(transFrom("ar", "hello")).toBe("أهلا بكم");
     expect(transFrom("en", "hello")).toBe("Hello World");
   });
+
+  it("should get proper translation keyword based on current locale code from translation object key", () => {
+    const translation = {
+      welcomeHome: {
+        en: "Welcome home",
+        ar: "مرحبا بكم",
+      },
+    };
+
+    expect(trans(translation.welcomeHome)).toBe("Welcome home");
+  });
+
+  it("should get proper translation keyword based on given locale code from translation object key", () => {
+    const translation = {
+      welcomeHome: {
+        en: "Welcome home",
+        ar: "مرحبا بكم",
+      },
+    };
+
+    expect(transFrom("ar", translation.welcomeHome)).toBe("مرحبا بكم");
+  });
+
+  it("should use locale callback to translate the keyword from the given object", () => {
+    const translations = {
+      home: {
+        en: "Home",
+        ar: "الرئيسية",
+      },
+    };
+
+    setLocalizationConfigurations({
+      fallback: "ar",
+    });
+
+    expect(transFrom("fr", translations.home)).toBe("الرئيسية");
+  });
 });

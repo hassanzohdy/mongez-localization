@@ -525,6 +525,8 @@ If you're going to make a pull request, please make sure to follow the next step
 
 ## Change Log
 
+- 2.1.1 (19 Feb 2023)
+  - Enhanced translation when object is passed as a keyword.
 - 2.1.0 (15 Feb 2023)
   - Now `trans` and `transFrom` function accepts `keyword` as **string** or **object**  
 - 2.0.11 (28 Nov 2022)

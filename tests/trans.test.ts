@@ -60,9 +60,26 @@ describe("localization/trans", () => {
         en: "Welcome home",
         ar: "مرحبا بكم",
       },
+      create: {
+        en: "Create new :item",
+        ar: "إنشاء :item جديد",
+      },
     };
 
     expect(trans(translation.welcomeHome)).toBe("Welcome home");
+    expect(trans(translation.create, { item: "Category" })).toBe(
+      "Create new Category",
+    );
+
+    expect(transFrom("ar", translation.welcomeHome)).toBe("مرحبا بكم");
+
+    expect(transFrom("ar", translation.create, { item: "Category" })).toBe(
+      "إنشاء Category جديد",
+    );
+
+    expect(transFrom("ar", translation.create, { item: "Category" })).toBe(
+      "إنشاء Category جديد",
+    );
   });
 
   it("should get proper translation keyword based on given locale code from translation object key", () => {

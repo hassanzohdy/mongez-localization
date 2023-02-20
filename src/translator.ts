@@ -161,15 +161,16 @@ export function transFrom(
   placeholders?: any,
   converter = currentConverter,
 ) {
+  let translation;
   if (typeof keyword === "object") {
-    return keyword[localeCode] || keyword[fallbackLocaleCode];
+    translation = keyword[localeCode] || keyword[fallbackLocaleCode];
+  } else {
+    translation =
+      get(translationsList, `${localeCode}.${keyword}`) ||
+      (fallbackLocaleCode
+        ? get(translationsList, `${fallbackLocaleCode}.${keyword}`)
+        : null);
   }
-
-  const translation =
-    get(translationsList, `${localeCode}.${keyword}`) ||
-    (fallbackLocaleCode
-      ? get(translationsList, `${fallbackLocaleCode}.${keyword}`)
-      : null);
 
   if (!translation) return keyword;
 

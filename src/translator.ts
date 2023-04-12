@@ -199,11 +199,9 @@ export type WithPlaceholder<T> = {
  * If keyword is "p", then it will return a function that accepts keyword and its placeholders
  * If keyword is "plain", then the converter used in translation will be the plain converter
  */
-export function transObject<T extends Keywords>(
-  translations: T,
-): T & WithPlaceholder<T> {
+export function transObject<T extends Keywords>(translations: T) {
   // use proxy
-  return new Proxy(translations, {
+  return new Proxy(translations as any, {
     get(target, key: string) {
       if (key === "p") {
         return function (keyword: keyof T, placeholders?: any) {
@@ -218,8 +216,6 @@ export function transObject<T extends Keywords>(
 
       if (key === "plain") {
         return function (keyword: keyof T, placeholders?: any) {
-          console.log(placeholders);
-
           return transFrom(
             currentLocaleCode,
             target[keyword] as Translatable,
@@ -233,5 +229,7 @@ export function transObject<T extends Keywords>(
 
       return transFrom(currentLocaleCode, target[key] as Translatable);
     },
-  }) as T & WithPlaceholder<T>;
+  }) as WithPlaceholder<T> & {
+    [key in keyof T]: string;
+  };
 }

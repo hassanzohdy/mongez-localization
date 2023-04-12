@@ -415,7 +415,6 @@ groupedTranslations({
   },
 });
 
-
 trans('home'); // Home Page
 ```
 

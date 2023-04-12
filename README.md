@@ -393,6 +393,99 @@ trans(frontOfficeTranslation.home); // Home Page
 
 This can be useful as mentioned earlier, but if you registered these files using `groupedTranslations` function, the last added keyword will be used when using the dynamic string i.e `trans('home')`.
 
+## Generate translatable object
+
+> Added in v2.2.0
+
+Another way to use translation by generating a translatable object, let's see an example to make it more clear.
+
+Normal Usage:
+
+```ts
+import { trans, groupedTranslations } from "@mongez/localization";
+
+groupedTranslations({
+  home: {
+    en: "Home Page",
+    ar: "الصفحة الرئيسية",
+  },
+  dashboard: {
+    en: "Dashboard",
+    ar: "لوحة القيادة",
+  },
+});
+
+
+trans('home'); // Home Page
+```
+
+Works just fine, but what if we want to make sure that the keyword is unique, and we don't want to use the same keyword in different files, also to reduce the syntax by not using `trans` function, we need then to use `transObject` instead of `groupedTranslations` function.
+
+```ts
+import { transObject } from "@mongez/localization";
+
+export const translations = transObject({
+  home: {
+    en: "Home Page",
+    ar: "الصفحة الرئيسية",
+  },
+  dashboard: {
+    en: "Dashboard",
+    ar: "لوحة القيادة",
+  },
+});
+
+
+// import translation from anywhere in the application
+console.log(translations.home); // Home Page
+```
+
+You see here, we used the direct access of the translation keyword directly without using `trans` function, and we can use the same keyword in different files without conflicts.
+
+> If the keyword is not found, the `fallback` locale code will be used instead.
+
+> If the keyword is not found in both current locale code and the fallback locale code, the keyword itself will be returned.
+
+### Using placeholders
+
+But, What if the keyword has placeholders, in that case, use the `translations.p` function that receives the keyword as first argument and the object of placeholders as the second argument.
+
+```ts
+import { transObject } from "@mongez/localization";
+
+export const translations = {
+  welcome: {
+    en: 'Hello :name',
+    ar: 'مرحبا :name',
+  }
+};
+
+console.log(translations.p('welcome', { name: 'Ahmed' })); // Hello Ahmed
+```
+
+> Kindly not the `p` property is reserved, you can not use it as a keyword.
+
+### Using Plain converter
+
+If for example, you're using the `jsx converter` by default, but you need to use `plain converter` for a specific keyword, you can use the `translations.plain` function, it also works with and without placeholders.
+
+```ts
+import { transObject } from "@mongez/localization";
+
+export const translations = {
+  welcome: {
+    en: 'Hello :name',
+    ar: 'مرحبا :name',
+  }
+  homePage: {
+    en: 'Home Page',
+    ar: 'الصفحة الرئيسية',
+  }
+};
+
+console.log(translations.plain('welcome', { name: 'Ahmed' })); // Hello Ahmed
+```
+
 ## Changing Current Locale Code
 
 By default, The package will use the current locale code defined in the configurations list, but we can change current locale code later in the project for example when a locale code is changed to a new locale code using `setCurrentLocaleCode` function.
@@ -525,6 +618,11 @@ If you're going to make a pull request, please make sure to follow the next step
 
 ## Change Log
 
+- 2.2.0 (12 Apr 2023)
+  - Added [Translatable object function](#generate-translatable-object).
+  - Renamed default `converter` to `plainConverter`.
+  - Enhanced typings for `plainConverter`.
+  - Added unit tests for `transObject` function.
 - 2.1.1 (19 Feb 2023)
   - Enhanced translation when object is passed as a keyword.
 - 2.1.0 (15 Feb 2023)
@@ -543,7 +641,3 @@ If you're going to make a pull request, please make sure to follow the next step
   - Added `sprintf-js` dependency.
 - 1.0.12 (06 Jan 2022)
   - Added [Translations list](#getting-translations-list)
-
-## TODO
-
-- Add unit Tests.

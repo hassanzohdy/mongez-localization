@@ -1,14 +1,27 @@
+interface Placeholders {
+  [key: string]: string | number | undefined;
+}
+
 /**
  * Convert the placeholders for the given translation
  */
-export function converter(translation: string, placeholders: any) {
-  const expression = `(${Object.keys(placeholders)
-    .map(key => (key.startsWith(":") ? key : ":" + key))
-    .join("|")})`;
+export function plainConverter(
+  translation: string,
+  placeholders: Placeholders = {},
+): string {
+  const expression = Object.keys(placeholders)
+    .map(key => `:${key}`)
+    .join("|");
 
   const regex = new RegExp(expression, "g");
 
+  console.log(translation, placeholders);
+
   return translation.replace(regex, (capture: string) => {
-    return placeholders[capture.substring(1)];
+    const value = placeholders[capture.substring(1)];
+    if (value === undefined) {
+      return capture;
+    }
+    return value.toString();
   });
 }

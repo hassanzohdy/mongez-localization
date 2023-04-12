@@ -1,5 +1,5 @@
 import { get, merge, set } from "@mongez/reinforcements";
-import { converter } from "./converters";
+import { plainConverter } from "./converters";
 import { localizationEvents } from "./events";
 import {
   Converter,
@@ -17,7 +17,7 @@ let currentLocaleCode: string = "en";
 /**
  * Current converter
  */
-let currentConverter: Converter = converter;
+let currentConverter: Converter = plainConverter;
 
 /**
  * all keywords for all locale codes
@@ -148,7 +148,7 @@ export function trans(
  * Translate using the default converter
  */
 export function plainTrans(keyword: string, placeholders?: any) {
-  return transFrom(currentLocaleCode, keyword, placeholders, converter);
+  return transFrom(currentLocaleCode, keyword, placeholders, plainConverter);
 }
 
 /**
@@ -175,4 +175,63 @@ export function transFrom(
   if (!translation) return keyword;
 
   return placeholders ? converter(translation, placeholders) : translation;
+}
+
+export type WithPlaceholder<T> = {
+  p: (keyword: keyof T, placeholders?: any) => string;
+  plain: (keyword: keyof T, placeholders?: any) => string;
+};
+
+/**
+ * Get a translation object with automatic translation using object syntax
+ * Please note this does not support nested objects, only keywords and their translations
+ * i.e
+ * const translations = transObject({
+ *  name: {
+ *     en: 'name',
+ *    ar: 'الاسم'
+ * }
+ * });
+ *
+ * Usage: translations.name // returns the name in current locale code
+ * If the keyword does not exist on current locale code, then it will check it in the fallback locale code
+ *
+ * If keyword is "p", then it will return a function that accepts keyword and its placeholders
+ * If keyword is "plain", then the converter used in translation will be the plain converter
+ */
+export function transObject<T extends Keywords>(
+  translations: T,
+): T & WithPlaceholder<T> {
+  // use proxy
+  return new Proxy(translations, {
+    get(target, key: string) {
+      if (key === "p") {
+        return function (keyword: keyof T, placeholders?: any) {
+          return transFrom(
+            currentLocaleCode,
+            target[keyword] as Translatable,
+            placeholders,
+            currentConverter,
+          );
+        };
+      }
+
+      if (key === "plain") {
+        return function (keyword: keyof T, placeholders?: any) {
+          console.log(placeholders);
+
+          return transFrom(
+            currentLocaleCode,
+            target[keyword] as Translatable,
+            placeholders,
+            plainConverter,
+          );
+        };
+      }
+
+      if (!target[key]) return transFrom(fallbackLocaleCode, key as string);
+
+      return transFrom(currentLocaleCode, target[key] as Translatable);
+    },
+  }) as T & WithPlaceholder<T>;
 }

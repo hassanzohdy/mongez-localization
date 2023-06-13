@@ -15,13 +15,12 @@ export function plainConverter(
 
   const regex = new RegExp(expression, "g");
 
-  console.log(translation, placeholders);
-
   return translation.replace(regex, (capture: string) => {
     const value = placeholders[capture.substring(1)];
-    if (value === undefined) {
+    if (!value && value !== 0) {
       return capture;
     }
+
     return value.toString();
   });
 }

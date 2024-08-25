@@ -375,7 +375,7 @@ export function RedComponent() {
   return (
     <>
       {trans('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
-    </strong>
+    </>
   )
 }
 ```
@@ -393,12 +393,13 @@ import { transX } from "@mongez/react-localization";
 export function RedComponent() {
   return (
     <>
-      // will convert the jsx value to [object Object] if the converter is not set to jsxConverter in the configurations.
+      {/* will convert the jsx value to [object Object] if the converter is not set to jsxConverter in the configurations.*/}
+
       {trans('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
 
-      // works fine regardless configurations.
+      {/* works fine regardless configurations. */}
       {transX('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
-    </strong>
+    </>
   )
 }
 ```

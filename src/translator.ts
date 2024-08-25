@@ -1,6 +1,7 @@
-import { get, merge, set } from "@mongez/reinforcements";
+import { flatten, get, merge, set } from "@mongez/reinforcements";
 import { plainConverter } from "./converters";
 import { localizationEvents } from "./events";
+import { getPlaceholderPattern } from "./placeholder-pattern-config";
 import {
   Converter,
   GroupedTranslations,
@@ -71,6 +72,25 @@ export function extend(localeCode: string, keywords: Keywords) {
 
 /**
  * Create a grouped translations based on keyword, each keyword contains list of locale codes and beside it its corresponding translation
+ *
+ * @example
+ * {
+ *  home: {
+ *    en: "Home",
+ *    ar: "الرئيسية"
+ *  }
+ * }
+ *
+ * Also it could have nested grouped translations
+ *
+ * @example
+ * {
+ *  general: {
+ *    home: {
+ *      en: "Home",
+ *      ar: "الرئيسية"
+ *    }
+ *  }
  */
 export function groupedTranslations(
   groupKey?: string | GroupedTranslations,
@@ -81,23 +101,29 @@ export function groupedTranslations(
     groupKey = undefined;
   }
 
-  for (const keyword in groupedTranslations) {
-    const translations = groupedTranslations[keyword];
-    for (const localeCode in translations) {
-      if (!translationsList[localeCode]) {
-        translationsList[localeCode] = {};
-      }
+  // now we need to loop over the grouped translations
+  // we have two cases here
+  // first one we have a group key
+  // second one we don't have a group key
+  // as values are always objects until the last level
+  // we need to create a recursive function to loop over the object
 
-      if (groupKey) {
-        set(
-          translationsList,
-          `${localeCode}.${groupKey}.${keyword}`,
-          translations[localeCode],
-        );
-      } else {
-        translationsList[localeCode][keyword] = translations[localeCode];
-      }
-    }
+  // output of the flatten object will be something like:
+  // general.home.en: "Home"
+  // general.home.ar: "الرئيسية"
+  const object = flatten(
+    groupKey && typeof groupKey === "string"
+      ? { [groupKey]: groupedTranslations }
+      : groupedTranslations,
+  );
+
+  // now the locale codes are the last dot in each key
+  // now we will loop over the object and add each key to the translations list
+  for (const key in object) {
+    const keyword = key.split(".");
+    const localeCode = keyword.pop();
+
+    set(translationsList, localeCode + "." + keyword.join("."), object[key]);
   }
 }
 
@@ -174,7 +200,9 @@ export function transFrom(
 
   if (!translation) return keyword;
 
-  return placeholders ? converter(translation, placeholders) : translation;
+  return placeholders
+    ? converter(translation, placeholders, getPlaceholderPattern())
+    : translation;
 }
 
 export type WithPlaceholder<T> = {

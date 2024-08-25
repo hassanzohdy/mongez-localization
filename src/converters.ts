@@ -8,19 +8,17 @@ interface Placeholders {
 export function plainConverter(
   translation: string,
   placeholders: Placeholders = {},
+  placeholderPattern: RegExp = /:([a-zA-Z0-9_-]+)/g,
 ): string {
-  const expression = Object.keys(placeholders)
-    .map(key => `:${key}`)
-    .join("|");
+  return translation.replace(
+    placeholderPattern,
+    (match: string, key: string) => {
+      const value = placeholders[key];
+      if (value === undefined) {
+        return match; // Return the original placeholder if no match is found
+      }
 
-  const regex = new RegExp(expression, "g");
-
-  return translation.replace(regex, (capture: string) => {
-    const value = placeholders[capture.substring(1)];
-    if (!value && value !== 0) {
-      return capture;
-    }
-
-    return value.toString();
-  });
+      return value.toString();
+    },
+  );
 }

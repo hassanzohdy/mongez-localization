@@ -1,5 +1,9 @@
 import { get, merge } from "@mongez/reinforcements";
 import {
+  placeholderPatterns,
+  setPlaceholderPattern,
+} from "./placeholder-pattern-config";
+import {
   setConverter,
   setCurrentLocaleCode,
   setFallbackLocaleCode,
@@ -31,6 +35,14 @@ export function setLocalizationConfigurations(
 
   if (configurationsList.defaultLocaleCode) {
     setCurrentLocaleCode(configurationsList.defaultLocaleCode);
+  }
+
+  if (configurationsList.placeholderPattern) {
+    setPlaceholderPattern(
+      typeof configurationsList.placeholderPattern === "string"
+        ? placeholderPatterns[configurationsList.placeholderPattern]
+        : configurationsList.placeholderPattern,
+    );
   }
 }
 

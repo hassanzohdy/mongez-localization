@@ -9,7 +9,11 @@ export type TranslationsList = {
 /**
  * Converter type
  */
-export type Converter = (keyword: string, placeholders: any) => any;
+export type Converter = (
+  keyword: string,
+  placeholders: any,
+  placeholderPattern: RegExp,
+) => any;
 
 /**
  * Translation keywords list
@@ -54,6 +58,12 @@ export type LocalizationConfigurations = {
    * Set placeholder converter
    */
   converter?: Converter;
+  /**
+   * Set placeholder pattern
+   *
+   * @default colon
+   */
+  placeholderPattern?: "colon" | "doubleCurly" | RegExp;
 };
 
 /**
@@ -61,9 +71,7 @@ export type LocalizationConfigurations = {
  * keyword is the key and its corresponding value is an object, each key of it represents locale code and its value is the translation
  */
 export type GroupedTranslations = {
-  [keyword: string]: {
-    [localeCode: string]: string;
-  };
+  [keyword: string]: GroupedTranslations | string;
 };
 
 /**

@@ -38,13 +38,13 @@ const translations: TranslationsList = {
 setLocalizationConfigurations({
   /**
    * Default locale code
-   * 
+   *
    * @default en
    */
   defaultLocaleCode: "ar",
   /**
    * Fall back locale code
-   * 
+   *
    * @default en
    */
   fallback: "en",
@@ -53,6 +53,41 @@ setLocalizationConfigurations({
    */
   translations: translations,
 });
+```
+
+All configurations are optional, you can set only the configurations you need.
+
+Here is the list of configurations:
+
+```ts
+export type LocalizationConfigurations = {
+  /**
+   * Default locale code
+   *
+   * @default en
+   */
+  defaultLocaleCode?: string;
+  /**
+   * Fall back locale code
+   *
+   * @default en
+   */
+  fallback?: string;
+  /**
+   * Set translations list
+   */
+  translations?: TranslationsList;
+  /**
+   * Set placeholder converter
+   */
+  converter?: Converter;
+  /**
+   * Set placeholder pattern
+   *
+   * @default colon
+   */
+  placeholderPattern?: "colon" | "doubleCurly" | RegExp;
+};
 ```
 
 Here we defined our current default locale code, fallback locale code and our translations list, now we're ready to use our translator.
@@ -184,7 +219,7 @@ You can also specify a group name (`dot.notation-syntax is allowed as well`) by 
 // src/locales/localization.ts
 import { groupedTranslations } from "@mongez/localization";
 
-groupedTranslations('store', {
+groupedTranslations("store", {
   orders: {
     en: "Orders",
     ar: "الطلبات",
@@ -195,7 +230,7 @@ groupedTranslations('store', {
   },
 });
 
-trans('store.orders'); // Products
+trans("store.orders"); // Products
 ```
 
 ## Translation placeholders
@@ -220,8 +255,8 @@ Now we defined two keywords, `createItem` and `minimumOrderPurchase`, in the `cr
 // somewhere in the app
 import { trans } from "@mongez/localization";
 
-trans("createItem", { item: 'Order' }); // Create New Order
-trans("createItem", { item: 'Customer' }); // Create New Customer
+trans("createItem", { item: "Order" }); // Create New Order
+trans("createItem", { item: "Customer" }); // Create New Customer
 trans("createItem", { item: "Category" }); // Create New Category
 ```
 
@@ -236,7 +271,30 @@ import { trans } from "@mongez/localization";
 trans("minimumOrderPurchase", { amount: 12 }); // Minimum purchase amount for this order is 12 USD
 ```
 
-### React JSX Placeholders
+## Nested grouped translations
+
+> Added in V3.0.0
+
+You can also nest grouped translations, this will allow you to group translations in a more organized way.
+
+```ts
+// src/locales/localization.ts
+import { groupedTranslations } from "@mongez/localization";
+
+groupedTranslations({
+  store: {
+    orders: {
+      en: "Orders",
+      ar: "الطلبات",
+    },
+    products: {
+      en: "Products",
+      ar: "المنتجات",
+    },
+});
+```
+
+## React JSX Placeholders
 
 > Added in V2.0
 
@@ -299,7 +357,11 @@ setLocalizationConfigurations({
   /**
    * Converter function to convert the placeholder value to jsx element
    */
-  converter: (translatedString: string, placeholders: any) => {
+  converter: (
+    translatedString: string,
+    placeholders: any,
+    placeholder: RegExp,
+  ) => {
     // do something with the translated string and the placeholders
     return translatedString;
   },
@@ -353,6 +415,79 @@ import { plainTrans } from "@mongez/localization";
 plainTrans("minimumOrderPurchase", { amount: 12 }); // Minimum purchase amount for this order is 12 USD
 ```
 
+## Placeholders pattern
+
+> Added in v3.0
+
+By default, the placeholder pattern is `colon`, but you can change it to `doubleCurly` or a custom regex pattern.
+
+```ts
+// src/config/localization.ts
+import {
+  setLocalizationConfigurations,
+  extend,
+  trans,
+} from "@mongez/localization";
+
+setLocalizationConfigurations({
+  /**
+   * Default locale code
+   *
+   * @default en
+   */
+  defaultLocaleCode: "ar",
+  /**
+   * Fall back locale code
+   *
+   * @default en
+   */
+  fallback: "en",
+  /**
+   * Set placeholder pattern
+   *
+   * @default colon
+   */
+  placeholderPattern: "doubleCurly",
+});
+
+// now the placeholder pattern is double curly
+extend("en", {
+  createItem: "Create New {{item}}",
+  minimumOrderPurchase:
+    "Minimum purchase amount for this order is {{amount}} USD",
+});
+
+trans("createItem", { item: "Order" });
+```
+
+We can also set it as a custom regex pattern.
+
+```ts
+// src/config/localization.ts
+import { setLocalizationConfigurations } from "@mongez/localization";
+
+setLocalizationConfigurations({
+  /**
+   * Default locale code
+   *
+   * @default en
+   */
+  defaultLocaleCode: "ar",
+  /**
+   * Fall back locale code
+   *
+   * @default en
+   */
+  fallback: "en",
+  /**
+   * Set placeholder pattern
+   *
+   * @default colon
+   */
+  placeholderPattern: /{{(.*?)}}/g,
+});
+```
+
 ## Translate from an object
 
 > Added in v2.1.0
@@ -367,13 +502,13 @@ const translations = {
   home: {
     en: "Home Page",
     ar: "الصفحة الرئيسية",
-  }
+  },
 };
 
 trans(translations.home); // Home Page (based on current locale code)
 
 // Or using transFrom function
-transFrom('en', translations.home); // Home Page (based on current locale code
+transFrom("en", translations.home); // Home Page (based on current locale code
 ```
 
 If the given locale code does not exist in the given object, the `fallback` locale code will be used instead.
@@ -382,9 +517,9 @@ The main reason behind adding this feature is to allow us to use the same keywor
 
 ```ts
 // Dashboard Page
-import { trans } from '@mongez/localization';
-import dashboardTranslation from './dashboard';
-import frontOfficeTranslation from './front-office';
+import { trans } from "@mongez/localization";
+import dashboardTranslation from "./dashboard";
+import frontOfficeTranslation from "./front-office";
 
 trans(dashboardTranslation.home); // Dashboard
 
@@ -415,7 +550,7 @@ groupedTranslations({
   },
 });
 
-trans('home'); // Home Page
+trans("home"); // Home Page
 ```
 
 Works just fine, but what if we want to make sure that the keyword is unique, and we don't want to use the same keyword in different files, also to reduce the syntax by not using `trans` function, we need then to use `transObject` instead of `groupedTranslations` function.
@@ -433,7 +568,6 @@ export const translations = transObject({
     ar: "لوحة القيادة",
   },
 });
-
 
 // import translation from anywhere in the application
 console.log(translations.home); // Home Page
@@ -454,12 +588,12 @@ import { transObject } from "@mongez/localization";
 
 export const translations = {
   welcome: {
-    en: 'Hello :name',
-    ar: 'مرحبا :name',
-  }
+    en: "Hello :name",
+    ar: "مرحبا :name",
+  },
 };
 
-console.log(translations.p('welcome', { name: 'Ahmed' })); // Hello Ahmed
+console.log(translations.p("welcome", { name: "Ahmed" })); // Hello Ahmed
 ```
 
 > Kindly not the `p` property is reserved, you can not use it as a keyword.
@@ -625,7 +759,7 @@ If you're going to make a pull request, please make sure to follow the next step
 - 2.1.1 (19 Feb 2023)
   - Enhanced translation when object is passed as a keyword.
 - 2.1.0 (15 Feb 2023)
-  - Now `trans` and `transFrom` function accepts `keyword` as **string** or **object**  
+  - Now `trans` and `transFrom` function accepts `keyword` as **string** or **object**
 - 2.0.11 (28 Nov 2022)
   - Added [Get fallback locale code function](#getting-fallback-locale-code)
 - 2.0.10 (13 Nov 2022)

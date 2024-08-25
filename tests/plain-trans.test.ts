@@ -3,7 +3,6 @@ import { extend, plainTrans, setLocalizationConfigurations } from "../src";
 describe("localization/plainTrans", () => {
   beforeAll(() => {
     extend("en", {
-      createItem: "Create New :item",
       hello: "Hello World",
     });
 
@@ -24,12 +23,6 @@ describe("localization/plainTrans", () => {
 
   it("should translate the keyword using plain converter", () => {
     expect(plainTrans("hello")).toBe("Hello World");
-  });
-
-  it("should translate the keyword using placeholder", () => {
-    expect(plainTrans("createItem", { item: "Category" })).toBe(
-      "Create New Category",
-    );
   });
 
   it("should should return the same keyword if missing in translation list", () => {

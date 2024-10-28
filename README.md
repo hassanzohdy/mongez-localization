@@ -369,14 +369,16 @@ setLocalizationConfigurations({
 ```
 
 ```tsx
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 
 export function RedComponent() {
   return (
     <>
-      {trans('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
+      {trans("minimumOrderPurchase", {
+        amount: <strong style={{ color: "red" }}>12</strong>,
+      })}
     </>
-  )
+  );
 }
 ```
 
@@ -387,7 +389,7 @@ Keep in mind that the return value for the `trans` function will be an array not
 You can use use the translation text with jsx by using `transX` function instead of `trans` this will always use the `jsxConverter` unlike the `trans` method which uses the converter from the defined configurations list.
 
 ```tsx
-import { trans } from '@mongez/localization';
+import { trans } from "@mongez/localization";
 import { transX } from "@mongez/react-localization";
 
 export function RedComponent() {
@@ -395,12 +397,16 @@ export function RedComponent() {
     <>
       {/* will convert the jsx value to [object Object] if the converter is not set to jsxConverter in the configurations.*/}
 
-      {trans('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
+      {trans("minimumOrderPurchase", {
+        amount: <strong style={{ color: "red" }}>12</strong>,
+      })}
 
       {/* works fine regardless configurations. */}
-      {transX('minimumOrderPurchase', { amount: <strong style={{color: 'red'}}>12</strong> })}
+      {transX("minimumOrderPurchase", {
+        amount: <strong style={{ color: "red" }}>12</strong>,
+      })}
     </>
-  )
+  );
 }
 ```
 
@@ -720,6 +726,49 @@ localizationEvents.onChange("fallback", (newLocaleCode, oldLocaleCode) => {
 
 // assuming current fallback locale code is `en`
 setFallbackLocaleCode("ar"); // once calling the `setFallbackLocaleCode` the `onChange.fallback` event will be triggered.
+```
+
+## Get translation locale code
+
+> Added in v3.1.0
+
+Sometimes, we may need to get the locale code for the translation on the fly, a real world scenario is when locale code is `ar` and we want to get translation for `eg` if current selected country is `Egypt` or `sa` if current country is `Saudi Arabia`, this can be done by defining `get translationLocaleCode` in the configurations list.
+
+```ts
+// src/config/localization.ts
+import {
+  setLocalizationConfigurations,
+  getCurrentLocaleCode,
+} from "@mongez/localization";
+
+setLocalizationConfigurations({
+  /**
+   * Default locale code
+   *
+   * @default en
+   */
+  defaultLocaleCode: "ar",
+  /**
+   * Fall back locale code
+   *
+   * @default en
+   */
+  fallback: "en",
+  /**
+   * Get translation locale code
+   * Please note to make it as a getter function
+   */
+  get translationLocaleCode: () => {
+    if (getCurrentLocaleCode() === "en") return "en";
+
+  // country code from somewhere in the app
+    if (countryCode === "eg") return "eg";
+
+    if (countryCode === "sa") return "sa";
+
+    return "ar";
+  },
+});
 ```
 
 ## Tests

@@ -1,4 +1,5 @@
 import { flatten, get, merge, set } from "@mongez/reinforcements";
+import { getLocalizationConfigurations } from "./config";
 import { plainConverter } from "./converters";
 import { localizationEvents } from "./events";
 import { getPlaceholderPattern } from "./placeholder-pattern-config";
@@ -49,6 +50,15 @@ export function getFallbackLocaleCode() {
  */
 export function setConverter(converter: Converter) {
   currentConverter = converter;
+}
+
+/**
+ * Get the locale code used in translation, this allows to get the locale code on the fly
+ */
+export function getTranslationLocaleCode(): string {
+  return (
+    getLocalizationConfigurations().translationLocalCode || currentLocaleCode
+  );
 }
 
 /**
@@ -167,14 +177,24 @@ export function trans(
   placeholders?: any,
   converter: Converter = currentConverter,
 ) {
-  return transFrom(currentLocaleCode, keyword, placeholders, converter);
+  return transFrom(
+    getTranslationLocaleCode(),
+    keyword,
+    placeholders,
+    converter,
+  );
 }
 
 /**
  * Translate using the default converter
  */
 export function plainTrans(keyword: string, placeholders?: any) {
-  return transFrom(currentLocaleCode, keyword, placeholders, plainConverter);
+  return transFrom(
+    getTranslationLocaleCode(),
+    keyword,
+    placeholders,
+    plainConverter,
+  );
 }
 
 /**

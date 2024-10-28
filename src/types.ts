@@ -64,6 +64,12 @@ export type LocalizationConfigurations = {
    * @default colon
    */
   placeholderPattern?: "colon" | "doubleCurly" | RegExp;
+  /**
+   * Resolve locale code that will be used to fetch the translation when calling `trans` function
+   * 
+   * @default return value of `getCurrentLocaleCode()`
+   */
+  translationLocalCode?: string;
 };
 
 /**

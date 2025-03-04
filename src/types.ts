@@ -37,6 +37,25 @@ export type LocaleCodeChangeCallback = (
  */
 export type LocalizationEventName = "localeCode" | "fallback";
 
+/**
+ * Count rule function type
+ */
+export type CountRuleFunction = (count: number) => boolean;
+
+/**
+ * Count rules for a specific language
+ */
+export type LanguageCountRules = {
+  [key: string]: CountRuleFunction;
+};
+
+/**
+ * Count rules configuration
+ */
+export type CountRulesConfig = {
+  [localeCode: string]: LanguageCountRules;
+};
+
 export type LocalizationConfigurations = {
   /**
    * Default locale code
@@ -64,6 +83,25 @@ export type LocalizationConfigurations = {
    * @default colon
    */
   placeholderPattern?: "colon" | "doubleCurly" | RegExp;
+  /**
+   * Custom count rules for each locale
+   */
+  countRules?: CountRulesConfig;
+  /**
+   * Range-based count configuration
+   */
+  countRanges?: {
+    /**
+     * Whether to enable range-based count rules
+     * @default false
+     */
+    enabled?: boolean;
+    /**
+     * Range separator for translation keys
+     * @default "_"
+     */
+    separator?: string;
+  };
   /**
    * Resolve locale code that will be used to fetch the translation when calling `trans` function
    * 

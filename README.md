@@ -824,3 +824,134 @@ If you're going to make a pull request, please make sure to follow the next step
   - Added `sprintf-js` dependency.
 - 1.0.12 (06 Jan 2022)
   - Added [Translations list](#getting-translations-list)
+- 3.2.0 (TBD)
+  - Added count-based translations feature with built-in rules for English and Arabic
+  - Added support for negative numbers in count-based translations
+  - Added range-based translations support
+  - Enhanced fallback behavior for count-based translations
+
+## Count-Based Translations
+
+> Added in v3.2.0
+
+The package now supports count-based translations, allowing you to define different translations based on the count value. This is particularly useful for handling pluralization in different languages.
+
+### Basic Usage
+
+To use count-based translations, append one of the following suffixes to your translation key:
+- `_zero`: For count = 0
+- `_one`: For count = 1
+- `_two`: For count = 2
+- `_three`: For count = 3
+- `_many`: For count > 3
+- `_negative`: For negative counts
+- `_other`: Default fallback if no matching count case is found
+
+```ts
+extend("en", {
+  "products": "Products",
+  "products_zero": "No products",
+  "products_one": "One product",
+  "products_two": "Two products",
+  "products_three": "Three products",
+  "products_many": ":count products",
+  "products_negative": "Invalid number of products (:count)",
+});
+
+// Usage
+trans("products", { count: 0 }); // "No products"
+trans("products", { count: 1 }); // "One product"
+trans("products", { count: 2 }); // "Two products"
+trans("products", { count: 3 }); // "Three products"
+trans("products", { count: 4 }); // "4 products"
+trans("products", { count: -1 }); // "Invalid number of products (-1)"
+```
+
+### Range-Based Translations
+
+You can define translations for specific numeric ranges using the format `_range[min-max]`:
+
+```ts
+extend("en", {
+  "people": "People",
+  "people_range[0-5]": "Few people (:count)",
+  "people_range[6-20]": "Some people (:count)",
+  "people_range[21-plus]": "Many people (:count)",
+});
+
+// Usage
+trans("people", { count: 3 }); // "Few people (3)"
+trans("people", { count: 15 }); // "Some people (15)"
+trans("people", { count: 50 }); // "Many people (50)"
+```
+
+### Built-in Language Rules
+
+The package includes built-in count rules for:
+
+#### English
+- zero: count = 0
+- one: count = 1
+- two: count = 2
+- three: count = 3
+- many: count > 3
+- negative: count < 0
+- other: fallback
+
+#### Arabic
+- zero: count = 0
+- one: count = 1
+- two: count = 2
+- few: count >= 3 && count <= 10
+- many: count > 10
+- other: fallback
+
+### Custom Count Rules
+
+You can define custom count rules for different languages:
+
+```ts
+setLocalizationConfigurations({
+  countRules: {
+    ar: {
+      zero: count => count === 0,
+      one: count => count === 1,
+      two: count => count === 2,
+      few: count => count >= 3 && count <= 10,
+      many: count => count > 10,
+      other: () => true,
+    },
+  },
+});
+```
+
+### Fallback Behavior
+
+When a count-based translation is not found, the system follows this fallback order:
+1. Exact count match (e.g., `_two` for count = 2)
+2. Range match (e.g., `_range[0-5]` for count = 3)
+3. Generic count category (e.g., `_many` for count > 3)
+4. Default translation (`_other`)
+5. Base translation key
+6. Fallback locale with the same process
+7. Original key if no translation is found
+
+### Cross-Language Support
+
+Count-based translations work seamlessly across languages, respecting each language's pluralization rules:
+
+```ts
+extend("en", {
+  "fruits_zero": "No fruits",
+  "fruits_one": "One fruit",
+  "fruits_many": ":count fruits",
+});
+
+extend("ar", {
+  "fruits_zero": "لا يوجد فواكه",
+  "fruits_one": "فاكهة واحدة",
+  "fruits_two": "فاكهتان",
+  "fruits_few": ":count فواكه",
+  "fruits_many": ":count فاكهة كثيرة",
+});
+```

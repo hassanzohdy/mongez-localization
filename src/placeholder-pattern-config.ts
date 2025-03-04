@@ -4,8 +4,6 @@ const colonPlaceholderPattern: RegExp = /:([a-zA-Z0-9_-]+)/g;
 // {{placeholder}} pattern
 const doubleCurlyPlaceholderPattern: RegExp = /{{([a-zA-Z0-9_-]+)}}/g;
 
-const defaultPlaceholderPattern: RegExp = colonPlaceholderPattern;
-
 export const placeholderPatterns = {
   colon: colonPlaceholderPattern,
   doubleCurly: doubleCurlyPlaceholderPattern,

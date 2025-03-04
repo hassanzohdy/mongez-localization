@@ -1,6 +1,7 @@
 import { flatten, get, merge, set } from "@mongez/reinforcements";
 import { getLocalizationConfigurations } from "./config";
 import { plainConverter } from "./converters";
+import { formatCount, getCountKey } from "./count-rules";
 import { localizationEvents } from "./events";
 import { getPlaceholderPattern } from "./placeholder-pattern-config";
 import {
@@ -211,11 +212,44 @@ export function transFrom(
   if (typeof keyword === "object") {
     translation = keyword[localeCode] || keyword[fallbackLocaleCode];
   } else {
-    translation =
-      get(translationsList, `${localeCode}.${keyword}`) ||
-      (fallbackLocaleCode
-        ? get(translationsList, `${fallbackLocaleCode}.${keyword}`)
-        : null);
+    // Check if we have a count in placeholders
+    if (placeholders?.count !== undefined) {
+      const count = Number(placeholders.count);
+      
+      // Try current locale with its count rules
+      const currentCountKey = getCountKey(count, localeCode);
+      translation = get(translationsList, `${localeCode}.${keyword}${currentCountKey}`);
+      
+      // If not found and we have a fallback, try the fallback locale with its own count rules
+      if (!translation && fallbackLocaleCode) {
+        const fallbackCountKey = getCountKey(count, fallbackLocaleCode);
+        translation = get(translationsList, `${fallbackLocaleCode}.${keyword}${fallbackCountKey}`);
+      }
+      
+      // If still not found, try other variants in order:
+      // 1. Current locale _other
+      // 2. Fallback locale _other
+      // 3. Current locale base
+      // 4. Fallback locale base
+      if (!translation) {
+        translation = get(translationsList, `${localeCode}.${keyword}_other`) ||
+          (fallbackLocaleCode && get(translationsList, `${fallbackLocaleCode}.${keyword}_other`)) ||
+          get(translationsList, `${localeCode}.${keyword}`) ||
+          (fallbackLocaleCode && get(translationsList, `${fallbackLocaleCode}.${keyword}`));
+      }
+
+      // Format the count value according to configuration
+      if (translation && placeholders.count !== undefined) {
+        placeholders = { ...placeholders, count: formatCount(count) };
+      }
+    } else {
+      // No count, just get regular translation
+      translation =
+        get(translationsList, `${localeCode}.${keyword}`) ||
+        (fallbackLocaleCode
+          ? get(translationsList, `${fallbackLocaleCode}.${keyword}`)
+          : null);
+    }
   }
 
   if (!translation) return keyword;

@@ -57,8 +57,12 @@ export function setConverter(converter: Converter) {
  * Get the locale code used in translation, this allows to get the locale code on the fly
  */
 export function getTranslationLocaleCode(): string {
+  const config = getLocalizationConfigurations();
+  // Prefer the correctly-spelled key; fall back to the legacy misspelling for backward compat.
   return (
-    getLocalizationConfigurations().translationLocalCode || currentLocaleCode
+    config.translationLocaleCode ||
+    config.translationLocalCode ||
+    currentLocaleCode
   );
 }
 

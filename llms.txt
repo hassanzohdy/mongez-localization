@@ -1,0 +1,38 @@
+# @mongez/localization
+
+> A framework-agnostic i18n primitive. Translation dictionaries, placeholder interpolation, count-based plural rules, locale-switching events, and a typed `transObject` proxy. The React adapter lives in [`@mongez/react-localization`](https://github.com/hassanzohdy/mongez-react-localization).
+
+Every export ships from the package root.
+
+## Docs
+
+- [Overview](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/overview.md): Pitch, install, mental model.
+- [README](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/README.md): Marketing-style index.
+- [Changelog](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/CHANGELOG.md): Release notes.
+
+## Reference (by namespace)
+
+- [Translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translations.md): `extend`, `groupedTranslations`, `setTranslationsList`, `getTranslationsList`, `getKeywordsListOf`. Translation dictionary shape and how to register keywords.
+- [Translating](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translating.md): `trans`, `transFrom`, `plainTrans`, `transObject`. How to read translations and what each variant is for.
+- [Interpolation](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/interpolation.md): Placeholder patterns (`colon`, `doubleCurly`, custom RegExp), custom converters, the `plainConverter` default.
+- [Count-based translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/count-translations.md): Suffixes (`_zero`, `_one`, `_two`, `_three`, `_many`, `_negative`, `_other`), built-in English and Arabic rules, custom rules via `countRules`.
+- [Events](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/events.md): `localizationEvents.onChange("localeCode" | "fallback", cb)`. Subscription shape and namespacing on the `@mongez/events` bus.
+
+## Recipes
+
+- [Recipes](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/recipes.md): One-file-per-locale layouts, lazy-loading locales, switching at runtime, building a `transObject`-based feature dictionary, plugging in `jsxConverter`.
+
+## Quick rules
+
+1. **Flat imports**: `import { trans, extend, setLocalizationConfigurations } from "@mongez/localization"`. No subpath entry points.
+2. **Configure once early.** `setLocalizationConfigurations({ defaultLocaleCode, fallback })` should run before the first `trans` call. Translations can be registered before or after.
+3. **`extend` merges; `setTranslationsList` replaces.** Two `extend("en", { … })` calls for the same locale are merged; `setTranslationsList(map)` overwrites everything.
+4. **Fallback order is: current locale → fallback locale → keyword itself.** A missing key never throws — it returns the key string so missing keys are visible in the UI.
+5. **`trans` accepts a keyword string OR a translation object** (`{ en: "...", ar: "..." }`). The same call works in both shapes; for objects, falls back to `fallbackLocaleCode` when the requested locale isn't present.
+6. **Count-based translations** require `{ count: n }` in the placeholders object. Without it, the count rules don't run.
+7. **Events fire on every set call**, even when the new value equals the old. Subscribers should dedupe themselves if needed.
+
+## Optional
+
+- [Full single-file reference (llms-full.txt)](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/llms-full.txt): All reference content concatenated.
+- [GitHub repository](https://github.com/hassanzohdy/mongez-localization): Source code, issues, releases.

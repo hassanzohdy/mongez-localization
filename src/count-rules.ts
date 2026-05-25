@@ -78,17 +78,18 @@ export function getCountKey(count: number, localeCode: string): string {
   // Handle range-based counts if enabled
   if (config.countRanges?.enabled) {
     const separator = config.countRanges.separator || "_";
-    
-    // Check for range-based translations
-    const ranges = [
-      { min: 0, max: 5, key: "0_5" },
-      { min: 6, max: 20, key: "6_20" },
-      { min: 21, max: Infinity, key: "21_plus" }
+    // Custom thresholds via config; fall back to the documented defaults so
+    // existing consumers see no behavior change when `ranges` is unset.
+    const ranges: Array<[number, number]> = config.countRanges.ranges || [
+      [0, 5],
+      [6, 20],
+      [21, Infinity],
     ];
 
-    for (const range of ranges) {
-      if (absCount >= range.min && absCount <= range.max) {
-        return `_range_${range.min}_${range.max === Infinity ? 'plus' : range.max}`;
+    for (const [min, max] of ranges) {
+      if (absCount >= min && absCount <= max) {
+        const maxKey = max === Infinity ? "plus" : String(max);
+        return `_range${separator}${min}${separator}${maxKey}`;
       }
     }
   }

@@ -1,0 +1,336 @@
+# @mongez/localization — full reference
+
+> A framework-agnostic i18n primitive. This is the concatenated reference; load `llms.txt` for the structured index instead.
+
+## Install
+
+```sh
+yarn add @mongez/localization
+# peer deps: @mongez/events, @mongez/reinforcements
+```
+
+## Public exports
+
+```ts
+import {
+  // configuration
+  setLocalizationConfigurations,
+  getLocalizationConfigurations,
+  getLocaleConfig,
+
+  // registering translations
+  extend,
+  groupedTranslations,
+  setTranslationsList,
+  getTranslationsList,
+  getKeywordsListOf,
+
+  // translating
+  trans,
+  transFrom,
+  plainTrans,
+  transObject,
+
+  // locale switching
+  setCurrentLocaleCode,
+  getCurrentLocaleCode,
+  setFallbackLocaleCode,
+  getFallbackLocaleCode,
+  getTranslationLocaleCode,
+
+  // converters
+  setConverter,
+  plainConverter,
+
+  // events
+  localizationEvents,
+
+  // types
+  type TranslationsList,
+  type Keywords,
+  type Converter,
+  type Translatable,
+  type LocalizationConfigurations,
+  type LocaleCodeChangeCallback,
+  type LocalizationEventName,
+  type CountRuleFunction,
+  type LanguageCountRules,
+  type CountRulesConfig,
+  type GroupedTranslations,
+  type WithPlaceholder,
+} from "@mongez/localization";
+```
+
+## setLocalizationConfigurations(options)
+
+```ts
+type LocalizationConfigurations = {
+  defaultLocaleCode?: string;              // initial current locale; default "en"
+  fallback?: string;                       // initial fallback locale; default "en"
+  translations?: TranslationsList;         // bulk-seed all locales
+  converter?: Converter;                   // swap the placeholder converter
+  placeholderPattern?: "colon" | "doubleCurly" | RegExp; // default "colon" → /:(\w+)/g
+  countRules?: { [localeCode: string]: LanguageCountRules };
+  countRanges?: {
+    enabled?: boolean;
+    separator?: string;                    // default "_" — controls the suffix delimiter
+    ranges?: Array<[number, number]>;      // default [[0,5],[6,20],[21,Infinity]]
+  };
+  translationLocaleCode?: string;          // runtime locale override at lookup time
+  translationLocalCode?: string;           // @deprecated misspelled — kept for backward compat
+};
+```
+
+`setLocalizationConfigurations` merges into the stored configuration and applies side effects for the supplied keys:
+
+- `defaultLocaleCode` → calls `setCurrentLocaleCode`, firing the `localeCode` event.
+- `fallback` → calls `setFallbackLocaleCode`, firing the `fallback` event.
+- `translations` → `setTranslationsList` (full replace).
+- `converter` → `setConverter` (replace).
+- `placeholderPattern` → installs the chosen pattern.
+- Other keys (e.g. `countRules`) are stored and looked up lazily.
+
+`getLocalizationConfigurations()` returns the merged config object.
+`getLocaleConfig(key, defaultValue?)` reads a single key with an optional fallback.
+
+## Translation dictionary shape
+
+```ts
+type TranslationsList = { [localeCode: string]: Keywords };
+type Keywords = { [key: string]: string | Keywords };
+```
+
+Nested `Keywords` objects are read with dot-notation in `trans`/`transFrom` (`trans("ui.home")`).
+
+## extend(localeCode, keywords)
+
+```ts
+extend(localeCode: string, keywords: Keywords): void
+```
+
+Merges into the locale's existing keyword bag. Calling `extend` repeatedly for the same locale is the idiomatic pattern for splitting a locale across feature files.
+
+```ts
+extend("en", { home: "Home" });
+extend("en", { contact: "Contact Us" });
+// → { en: { home: "Home", contact: "Contact Us" } }
+```
+
+## groupedTranslations(groupKey?, dict)
+
+```ts
+groupedTranslations(dict: GroupedTranslations): void
+groupedTranslations(groupKey: string, dict: GroupedTranslations): void
+
+type GroupedTranslations = { [keyword: string]: GroupedTranslations | string };
+```
+
+Declares translations keyword-first (every keyword carries its locale map), instead of locale-first (`extend` style). Internally flattens the input and pushes each leaf into the right locale.
+
+```ts
+groupedTranslations({
+  home:    { en: "Home",       ar: "الرئيسية" },
+  contact: { en: "Contact Us", ar: "اتصل بنا" },
+});
+
+groupedTranslations("store", {
+  orders: { en: "Orders", ar: "الطلبات" },
+});
+
+groupedTranslations({
+  general: {                     // nested groups
+    home: { en: "Home", ar: "الرئيسية" },
+  },
+});
+```
+
+`trans("store.orders")` and `trans("general.home")` both work afterwards.
+
+## trans / transFrom / plainTrans
+
+```ts
+trans(keyword: Translatable, placeholders?, converter?): any
+transFrom(localeCode: string, keyword: Translatable, placeholders?, converter?): any
+plainTrans(keyword: string, placeholders?): string
+
+type Translatable = string | { [localeCode: string]: string };
+```
+
+- **`trans(keyword)`** — translates against the current locale (or the configured `translationLocalCode` if set), falls back to the fallback locale, then returns the keyword itself.
+- **`transFrom(locale, keyword)`** — translates against an explicit locale. Same fallback chain.
+- **`plainTrans(keyword)`** — like `trans`, but always uses `plainConverter` regardless of the configured converter. Useful for mixing JSX (`jsxConverter` as default) with the occasional plain-string lookup.
+
+`keyword` may be a string (looked up in the dictionary) or an inline object (`{ en: "Home", ar: "الرئيسية" }`) — the latter is useful for per-feature translation literals declared next to the component that uses them.
+
+`placeholders` are interpolated via the active converter (or `plainConverter` for `plainTrans`).
+
+## Placeholders and patterns
+
+Default pattern: `/:(\w+)/g` (`:name`).
+
+Named alternatives: `"colon"` (default), `"doubleCurly"` (`{{name}}`). Any RegExp also works — see `src/placeholder-pattern-config.ts`.
+
+```ts
+setLocalizationConfigurations({ placeholderPattern: "doubleCurly" });
+extend("en", { hi: "Hello {{who}}" });
+trans("hi", { who: "Ada" });           // "Hello Ada"
+```
+
+A placeholder that has no matching key in the object is left in the output untouched.
+
+## plainConverter
+
+```ts
+plainConverter(
+  translation: string,
+  placeholders: { [k: string]: string | number | undefined } = {},
+  placeholderPattern: RegExp = /:([a-zA-Z0-9_-]+)/g,
+): string
+```
+
+The default converter. Replaces placeholders by name, stringifies numbers, leaves un-matched slots intact.
+
+## Custom converters
+
+```ts
+type Converter = (
+  keyword: string,
+  placeholders: any,
+  placeholderPattern: RegExp,
+) => any;
+
+setLocalizationConfigurations({ converter: myConverter });
+// or
+setConverter(myConverter);
+```
+
+The converter receives the resolved translation (already in the right locale), the placeholders object, and the active placeholder RegExp. Return type isn't constrained — `jsxConverter` returns an array of React fragments rather than a string.
+
+A converter is **only invoked when placeholders are passed**. `trans("home")` (no placeholders) returns the raw translation string with no converter call.
+
+## Count-based translations
+
+Suffix a keyword with a count-rule name and pass `{ count: n }`:
+
+```ts
+extend("en", {
+  products_zero:  "No products",
+  products_one:   "One product",
+  products_two:   "Two products",
+  products_three: "Three products",
+  products_many:  ":count products",
+  products_negative: "Invalid count (:count)",
+  products_other: ":count products",
+});
+
+trans("products", { count: 0 });     // "No products"
+trans("products", { count: 4 });     // "4 products"  (from _many)
+trans("products", { count: -2 });    // "Invalid count (2)"  (negative → abs)
+```
+
+Built-in rule packs:
+
+- `en`: zero (n===0), one (n===1), two (n===2), three (n===3), many (n>3), negative (n<0), other (true).
+- `ar`: zero, one, two, few (mod100 in [3..10]), many (mod100 in [11..99]), negative, other.
+
+Override per-locale:
+
+```ts
+setLocalizationConfigurations({
+  countRules: {
+    fr: {
+      one:   n => n === 0 || n === 1,   // French treats 0 and 1 as one
+      other: () => true,
+    },
+  },
+});
+```
+
+Selector order: current-locale's count-tagged variant → fallback-locale's count-tagged variant → current `_other` → fallback `_other` → current bare → fallback bare → keyword itself.
+
+`:count` is interpolated as the **absolute** value (negatives turn into positives in the output).
+
+## transObject(dict)
+
+```ts
+function transObject<T extends Keywords>(dict: T):
+  WithPlaceholder<T> & { [K in keyof T]: string };
+
+type WithPlaceholder<T> = {
+  p:     (keyword: keyof T, placeholders?: any) => string;
+  plain: (keyword: keyof T, placeholders?: any) => string;
+};
+```
+
+Builds a Proxy where direct property reads return the current-locale translation, and the reserved methods `p` / `plain` handle placeholder interpolation:
+
+```ts
+const t = transObject({
+  name:    { en: "name",    ar: "الاسم" },
+  welcome: { en: "Hi :who", ar: "مرحبا :who" },
+});
+
+t.name;                            // current-locale value
+t.p("welcome", { who: "Ada" });    // interpolates via configured converter
+t.plain("welcome", { who: "Ada" }); // forces plainConverter
+```
+
+Unknown keys on the proxy fall through to a `transFrom(fallbackLocaleCode, key)` lookup, so reading `t.somethingNotInDict` will resolve against the global translations under the fallback locale and return the bare key if that also misses. This lets you mix per-feature `transObject` dictionaries with globally-registered keywords.
+
+## Locale switching
+
+```ts
+setCurrentLocaleCode(localeCode: string): void
+getCurrentLocaleCode(): string
+
+setFallbackLocaleCode(localeCode: string): void
+getFallbackLocaleCode(): string
+
+getTranslationLocaleCode(): string  // returns configurations.translationLocalCode || getCurrentLocaleCode()
+```
+
+`setCurrentLocaleCode` fires the `localeCode` event. `setFallbackLocaleCode` fires the `fallback` event. Both fire on **every** call, including when the new value equals the old.
+
+## Events
+
+```ts
+import { localizationEvents } from "@mongez/localization";
+
+localizationEvents.onChange("localeCode", (next, prev) => { … });
+localizationEvents.onChange("fallback",  (next, prev) => { … });
+
+type LocaleCodeChangeCallback = (newLocaleCode: string, oldLocaleCode: string) => void;
+type LocalizationEventName = "localeCode" | "fallback";
+```
+
+Returns an `EventSubscription` (from `@mongez/events`) with `.unsubscribe()`.
+
+Bus namespace: `localization.change.localeCode` and `localization.change.fallback`. Listening with raw `events.subscribe("localization.change.localeCode", cb)` works too.
+
+## Internal state
+
+The package keeps four pieces of module-level state:
+
+- The merged configuration (`localesConfig` in `src/config.ts`).
+- The current locale code (`currentLocaleCode` in `src/translator.ts`).
+- The fallback locale code (`fallbackLocaleCode` in `src/translator.ts`).
+- The translations dictionary (`translationsList` in `src/translator.ts`).
+- The active converter (`currentConverter` in `src/translator.ts`).
+- The active placeholder RegExp (`placeholderPattern` in `src/placeholder-pattern-config.ts`).
+
+For tests, reset these between cases. The test suite ships a `helpers.ts` utility that does so via the public setters.
+
+## Bugs and gotchas (current code)
+
+- **Empty translations bypass.** `transFrom` uses `||` chains on the `get(translationsList, …)` result. An intentionally-empty string in a locale falls through to the fallback chain. Translations that should be empty in one locale aren't expressible.
+- **Arabic `many` rule cuts off at 99.** `src/count-rules.ts:30-33` matches `mod100` in `[11, 99]`. Counts of 100, 200, 1000 land on `_other`, not `_many`. The README says "count > 10" without mentioning the upper bound.
+- **Events don't dedupe.** Calling `setCurrentLocaleCode("en")` while the current locale is already `"en"` still fires the event. Subscribers should dedupe themselves if needed.
+- **Legacy `translationLocalCode` (misspelled).** Still accepted for backward compatibility but `@deprecated`; prefer the correctly-spelled `translationLocaleCode`. When both are set, the correctly-spelled key wins.
+
+## What this package does NOT do
+
+- JSX placeholders → `@mongez/react-localization` (`jsxConverter`, `transX`).
+- React hooks / context providers → none yet. Use `localizationEvents.onChange` to drive re-renders manually, or implement a hook on top.
+- Storage / persistence of the selected locale → bring your own (cookies, localStorage, query string, …).
+- Direction-awareness (`dir="rtl"`) → derive from the locale yourself.
+- ICU MessageFormat-style nested syntax → out of scope; the package is `name → string + placeholders`.

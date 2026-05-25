@@ -101,11 +101,23 @@ export type LocalizationConfigurations = {
      * @default "_"
      */
     separator?: string;
+    /**
+     * Custom range thresholds as an array of `[min, max]` tuples.
+     * Use `Infinity` as the max for an open-ended bucket (rendered as `plus` in the key).
+     *
+     * @default [[0, 5], [6, 20], [21, Infinity]]
+     */
+    ranges?: Array<[number, number]>;
   };
   /**
    * Resolve locale code that will be used to fetch the translation when calling `trans` function
-   * 
+   *
    * @default return value of `getCurrentLocaleCode()`
+   */
+  translationLocaleCode?: string;
+  /**
+   * @deprecated Misspelled — use `translationLocaleCode` instead.
+   * Kept for backward compatibility; will be removed in a future major release.
    */
   translationLocalCode?: string;
 };

@@ -1,7 +1,9 @@
 ---
 name: mongez-localization-overview
-description: High-level architecture of @mongez/localization — what it does, what it doesn't, its mental model, and the fallback chain.
-when_to_use: User imports from @mongez/localization for the first time, asks what the package does, asks about its design philosophy, asks about scope boundaries (what belongs in core vs the React adapter), or asks how the fallback chain works at a high level.
+description: |
+  High-level architecture of `@mongez/localization` — what it does, what it doesn't, its mental model, and the fallback chain.
+  TRIGGER when: code imports `setLocalizationConfigurations`, `extend`, `trans`, `transFrom`, `transObject`, `setCurrentLocaleCode`, `localizationEvents`, `TranslationsList`, or `LocalizationConfigurations` from `@mongez/localization`; user asks "what does @mongez/localization do", "how does the fallback chain work", or "what's the difference between this and @mongez/react-localization"; `import { ... } from "@mongez/localization"`.
+  SKIP: `mongez-localization-translations` (registering dictionaries via `extend`/`groupedTranslations`), `mongez-localization-translating` (the `trans` lookup functions), `mongez-localization-interpolation`/`count-translations`/`events`/`recipes` for specific concerns; `@mongez/react-localization` is the React-specific layer on top of this core (`jsxConverter`, `transX`, hooks) — use its skills for JSX placeholders or React hooks.
 ---
 
 # Overview

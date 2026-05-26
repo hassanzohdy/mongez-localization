@@ -104,6 +104,9 @@ Nested `Keywords` objects are read with dot-notation in `trans`/`transFrom` (`tr
 
 ## extend(localeCode, keywords)
 
+> **Auto-trigger:** code imports `extend`, `groupedTranslations`, `setTranslationsList`, `getTranslationsList`, `getKeywordsListOf`, `TranslationsList`, `Keywords`, or `GroupedTranslations` from `@mongez/localization`; user asks "how do I register translations", "how do I structure a TranslationsList", "should I use one file per locale or per feature", or "how do I load translations from JSON"; `import { extend, groupedTranslations } from "@mongez/localization"`.
+> **Skip when:** `mongez-localization-translating` (calling `trans`/`transFrom`/`transObject` to read keywords back out), `mongez-localization-interpolation` (placeholder syntax), `mongez-localization-count-translations` (pluralization suffixes), `mongez-localization-overview` (mental model only); `@mongez/react-localization` is the React-specific layer on top of this core — use its skills for React-bound dictionary patterns.
+
 ```ts
 extend(localeCode: string, keywords: Keywords): void
 ```
@@ -148,6 +151,9 @@ groupedTranslations({
 
 ## trans / transFrom / plainTrans
 
+> **Auto-trigger:** code imports `trans`, `transFrom`, `plainTrans`, `transObject`, `getTranslationLocaleCode`, `Translatable`, or `WithPlaceholder` from `@mongez/localization`; user asks "how do I translate a keyword", "how do I read a translation from a specific locale", "how do I get typed access to feature translations", or "why is my empty-string translation falling through to fallback"; `import { trans, transFrom, transObject } from "@mongez/localization"`.
+> **Skip when:** `mongez-localization-translations` (registering dictionaries via `extend`/`groupedTranslations`), `mongez-localization-interpolation` (placeholder syntax and converters), `mongez-localization-count-translations` (count-based plural lookups); `@mongez/react-localization` is the React-specific layer on top of this core — use its `transX` and React hooks instead when working with JSX placeholders.
+
 ```ts
 trans(keyword: Translatable, placeholders?, converter?): any
 transFrom(localeCode: string, keyword: Translatable, placeholders?, converter?): any
@@ -165,6 +171,9 @@ type Translatable = string | { [localeCode: string]: string };
 `placeholders` are interpolated via the active converter (or `plainConverter` for `plainTrans`).
 
 ## Placeholders and patterns
+
+> **Auto-trigger:** code imports `plainConverter`, `setConverter`, `Converter`, or sets `placeholderPattern`/`converter` on `setLocalizationConfigurations` from `@mongez/localization`; code passes a `placeholders` object to `trans`/`transFrom`; user asks "how do I change placeholder syntax to {{name}}", "how do I write a custom converter", "why is my placeholder left as `:name` in the output", or "how do I escape HTML in translations"; `import { plainConverter, setConverter } from "@mongez/localization"`.
+> **Skip when:** `mongez-localization-count-translations` (count-based lookups — though `:count` is still interpolated via this layer), `mongez-localization-translating` (the lookup functions themselves); `@mongez/react-localization` is the React-specific layer on top of this core — use its `jsxConverter` and `transX` skills for JSX placeholder values like `<strong>`/`<Link>`.
 
 Default pattern: `/:(\w+)/g` (`:name`).
 
@@ -209,6 +218,9 @@ The converter receives the resolved translation (already in the right locale), t
 A converter is **only invoked when placeholders are passed**. `trans("home")` (no placeholders) returns the raw translation string with no converter call.
 
 ## Count-based translations
+
+> **Auto-trigger:** code passes `{ count: n }` to `trans`/`plainTrans`/`transFrom`; code uses `countRules`, `countRanges`, `CountRuleFunction`, `LanguageCountRules`, or `CountRulesConfig` from `@mongez/localization`; keywords end in `_zero`/`_one`/`_two`/`_three`/`_few`/`_many`/`_negative`/`_other`/`_range_*`; user asks "how do I pluralize a keyword", "how do Arabic plural rules work", "how do I define custom plural rules for French/Polish", or "how do range-based count suffixes work".
+> **Skip when:** `mongez-localization-interpolation` (plain placeholder substitution without count machinery — use a non-`count` placeholder name like `:n`/`:total`), `mongez-localization-translating` (non-count lookups); `@mongez/react-localization` is the React-specific layer on top of this core — pluralization is the same in both, but use its skills for JSX rendering concerns.
 
 Suffix a keyword with a count-rule name and pass `{ count: n }`:
 
@@ -292,6 +304,9 @@ getTranslationLocaleCode(): string  // returns configurations.translationLocalCo
 `setCurrentLocaleCode` fires the `localeCode` event. `setFallbackLocaleCode` fires the `fallback` event. Both fire on **every** call, including when the new value equals the old.
 
 ## Events
+
+> **Auto-trigger:** code imports `localizationEvents`, `LocaleCodeChangeCallback`, or `LocalizationEventName` from `@mongez/localization`; code calls `localizationEvents.onChange("localeCode", ...)` or `localizationEvents.onChange("fallback", ...)`; code subscribes to `localization.change.localeCode`/`localization.change.fallback` on `@mongez/events`; user asks "how do I react to a locale switch", "how do I persist the locale to a cookie/localStorage", "how do I sync the URL `?lang=` with the current locale", or "how do I trigger a React re-render on locale change without @mongez/react-localization".
+> **Skip when:** `mongez-localization-translating` (just reading translations), `mongez-localization-recipes` (full end-to-end setups including events); `@mongez/react-localization` is the React-specific layer on top of this core — if it's already installed, prefer its `useCurrentLocale`/provider hooks over a hand-rolled subscriber.
 
 ```ts
 import { localizationEvents } from "@mongez/localization";

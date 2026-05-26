@@ -1,7 +1,9 @@
 ---
 name: mongez-localization-translating
-description: The four translation lookup functions — trans(), transFrom(), plainTrans(), and transObject() — and how the fallback chain works.
-when_to_use: User calls trans(), transFrom(), plainTrans(), or transObject(); user asks how to translate a keyword into the current or an explicit locale; user asks about the fallback chain for plain lookups; user asks how to get typed access to a feature's translation keys; user encounters the empty-string falsy-translation gotcha.
+description: |
+  The four translation lookup functions — `trans`, `transFrom`, `plainTrans`, and `transObject` — and how the fallback chain resolves a keyword.
+  TRIGGER when: code imports `trans`, `transFrom`, `plainTrans`, `transObject`, `getTranslationLocaleCode`, `Translatable`, or `WithPlaceholder` from `@mongez/localization`; user asks "how do I translate a keyword", "how do I read a translation from a specific locale", "how do I get typed access to feature translations", or "why is my empty-string translation falling through to fallback"; `import { trans, transFrom, transObject } from "@mongez/localization"`.
+  SKIP: `mongez-localization-translations` (registering dictionaries via `extend`/`groupedTranslations`), `mongez-localization-interpolation` (placeholder syntax and converters), `mongez-localization-count-translations` (count-based plural lookups); `@mongez/react-localization` is the React-specific layer on top of this core — use its `transX` and React hooks instead when working with JSX placeholders.
 ---
 
 # Translating

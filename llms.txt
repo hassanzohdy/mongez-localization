@@ -7,20 +7,27 @@ Every export ships from the package root.
 ## Docs
 
 - [Overview](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/overview.md): Pitch, install, mental model.
+  - *Auto-trigger:* First import from `@mongez/localization`, or user asks what the package does, how the fallback chain works, or how it differs from `@mongez/react-localization`.
 - [README](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/README.md): Marketing-style index.
 - [Changelog](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/CHANGELOG.md): Release notes.
 
 ## Reference (by namespace)
 
 - [Translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translations.md): `extend`, `groupedTranslations`, `setTranslationsList`, `getTranslationsList`, `getKeywordsListOf`. Translation dictionary shape and how to register keywords.
+  - *Auto-trigger:* Code imports `extend`/`groupedTranslations`/`setTranslationsList`, or user asks how to register translations, structure a `TranslationsList`, or load translations from JSON.
 - [Translating](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translating.md): `trans`, `transFrom`, `plainTrans`, `transObject`. How to read translations and what each variant is for.
+  - *Auto-trigger:* Code imports `trans`/`transFrom`/`plainTrans`/`transObject`, or user asks how to translate a keyword, read from a specific locale, or get typed access to feature translations.
 - [Interpolation](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/interpolation.md): Placeholder patterns (`colon`, `doubleCurly`, custom RegExp), custom converters, the `plainConverter` default.
+  - *Auto-trigger:* Code passes a `placeholders` object to `trans`, imports `plainConverter`/`setConverter`, or user asks how to change placeholder syntax or write a custom converter.
 - [Count-based translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/count-translations.md): Suffixes (`_zero`, `_one`, `_two`, `_three`, `_many`, `_negative`, `_other`), built-in English and Arabic rules, custom rules via `countRules`.
+  - *Auto-trigger:* Code passes `{ count: n }` to `trans`, uses `_zero`/`_one`/`_many`/`_other` suffixes or `countRules`/`countRanges`, or user asks how to pluralize a keyword.
 - [Events](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/events.md): `localizationEvents.onChange("localeCode" | "fallback", cb)`. Subscription shape and namespacing on the `@mongez/events` bus.
+  - *Auto-trigger:* Code imports `localizationEvents`, subscribes to `localeCode`/`fallback` changes, or user asks how to persist the locale to a cookie/URL or trigger a React re-render on switch.
 
 ## Recipes
 
 - [Recipes](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/recipes.md): One-file-per-locale layouts, lazy-loading locales, switching at runtime, building a `transObject`-based feature dictionary, plugging in `jsxConverter`.
+  - *Auto-trigger:* User wants a full end-to-end i18n setup, lazy-loading locales, cookie/URL sync, pluralization wiring, or mixing global with feature-scoped translations.
 
 ## Quick rules
 

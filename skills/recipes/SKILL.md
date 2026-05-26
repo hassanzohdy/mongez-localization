@@ -1,7 +1,9 @@
 ---
 name: mongez-localization-recipes
-description: Ready-to-copy patterns for common @mongez/localization setups — locale files, feature dictionaries, lazy-loading, URL/cookie sync, React re-renders, JSX placeholders, and pluralization.
-when_to_use: User wants a complete working example or boilerplate for @mongez/localization, asks how to set up localization end-to-end, asks how to lazy-load locale files, asks how to sync the locale with cookies or the URL, asks how to pluralize a counter, or asks how to mix global and feature-scoped translations.
+description: |
+  Ready-to-copy patterns combining `extend`, `groupedTranslations`, `transObject`, `setLocalizationConfigurations`, `setCurrentLocaleCode`, `localizationEvents`, and `jsxConverter` — locale files, feature dictionaries, lazy-loading, URL/cookie sync, React re-renders, JSX placeholders, and pluralization.
+  TRIGGER when: user asks "how do I set up @mongez/localization end-to-end", "give me a boilerplate for i18n", "how do I lazy-load locale files", "how do I sync the locale with a cookie or URL query string", "how do I pluralize a counter", or "how do I mix global keywords with feature-scoped translations"; code combines multiple `@mongez/localization` exports in a setup file.
+  SKIP: the per-concern skills (`mongez-localization-translations`, `mongez-localization-translating`, `mongez-localization-interpolation`, `mongez-localization-count-translations`, `mongez-localization-events`) when only one concept is in scope — those go deeper on a single topic; `@mongez/react-localization` is the React-specific layer on top of this core — if it's installed, prefer its provider/hook recipes for JSX placeholders and re-render wiring.
 ---
 
 # Recipes

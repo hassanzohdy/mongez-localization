@@ -1,6 +1,6 @@
 {
   "name": "@mongez/localization",
-  "version": "3.3.0",
+  "version": "3.4.1",
   "description": "Framework-agnostic i18n primitive: translation dictionaries, placeholder interpolation, count-based plural rules, and locale switching events.",
   "main": "src/index.ts",
   "sideEffects": false,

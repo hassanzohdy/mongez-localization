@@ -1,7 +1,9 @@
 ---
 name: mongez-localization-interpolation
-description: How placeholder interpolation works — the default :name pattern, switching to double-curly or custom RegExp patterns, custom converters, and JSX placeholders via the React adapter.
-when_to_use: User passes a placeholders object to trans() or transFrom(), asks how to change the placeholder syntax, asks about custom converters or setConverter(), asks why a placeholder is left unresolved, asks about plainConverter, or asks how to use JSX values as placeholders via jsxConverter.
+description: |
+  How placeholder interpolation works — the default `:name` pattern, switching to `doubleCurly` or custom RegExp patterns, custom `Converter`s, and JSX placeholders via the React adapter.
+  TRIGGER when: code imports `plainConverter`, `setConverter`, `Converter`, or sets `placeholderPattern`/`converter` on `setLocalizationConfigurations` from `@mongez/localization`; code passes a `placeholders` object to `trans`/`transFrom`; user asks "how do I change placeholder syntax to {{name}}", "how do I write a custom converter", "why is my placeholder left as `:name` in the output", or "how do I escape HTML in translations"; `import { plainConverter, setConverter } from "@mongez/localization"`.
+  SKIP: `mongez-localization-count-translations` (count-based lookups — though `:count` is still interpolated via this layer), `mongez-localization-translating` (the lookup functions themselves); `@mongez/react-localization` is the React-specific layer on top of this core — use its `jsxConverter` and `transX` skills for JSX placeholder values like `<strong>`/`<Link>`.
 ---
 
 # Interpolation

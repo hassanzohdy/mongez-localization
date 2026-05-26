@@ -1,7 +1,9 @@
 ---
 name: mongez-localization-translations
-description: How to register and manage translation dictionaries using extend(), groupedTranslations(), and setTranslationsList().
-when_to_use: User calls extend() or groupedTranslations() to register translations, asks how to structure a TranslationsList, asks about one-file-per-locale vs one-file-per-feature patterns, asks how to load translations from JSON, or asks about the TranslationsList / Keywords types.
+description: |
+  How to register and manage translation dictionaries using `extend`, `groupedTranslations`, and `setTranslationsList`.
+  TRIGGER when: code imports `extend`, `groupedTranslations`, `setTranslationsList`, `getTranslationsList`, `getKeywordsListOf`, `TranslationsList`, `Keywords`, or `GroupedTranslations` from `@mongez/localization`; user asks "how do I register translations", "how do I structure a TranslationsList", "should I use one file per locale or per feature", or "how do I load translations from JSON"; `import { extend, groupedTranslations } from "@mongez/localization"`.
+  SKIP: `mongez-localization-translating` (calling `trans`/`transFrom`/`transObject` to read keywords back out), `mongez-localization-interpolation` (placeholder syntax), `mongez-localization-count-translations` (pluralization suffixes), `mongez-localization-overview` (mental model only); `@mongez/react-localization` is the React-specific layer on top of this core — use its skills for React-bound dictionary patterns.
 ---
 
 # Translations

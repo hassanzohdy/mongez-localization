@@ -62,7 +62,7 @@ trans("balance", { count: 7 });             // "7 remaining"
 | `_many` | `Math.abs(n) % 100` in `[11, 99]` |
 | `_other` | fallback |
 
-Note: `_many` cuts off at `% 100 === 99`. Counts of 100, 200, 1000 land on `_other`, not `_many`. (The README states "count > 10" without that upper bound — known gap.)
+Note: `_many` cuts off at `% 100 === 99`. Counts of 100, 200, 1000 land on `_other`, not `_many`.
 
 ```ts
 extend("ar", {

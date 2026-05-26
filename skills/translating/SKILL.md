@@ -115,9 +115,9 @@ t.login;                                 // from the dictionary
 getTranslationLocaleCode(): string
 ```
 
-Returns `getLocalizationConfigurations().translationLocalCode || getCurrentLocaleCode()`. `trans` uses this internally to pick the locale. The override lets you decouple "the locale the user sees" from "the locale we look up translations in" — handy when locale codes follow country (`ar-eg`, `ar-sa`) but you want to choose at lookup time without redefining the current locale.
+Returns `getLocalizationConfigurations().translationLocaleCode || getLocalizationConfigurations().translationLocalCode || getCurrentLocaleCode()`. `trans` uses this internally to pick the locale. The override lets you decouple "the locale the user sees" from "the locale we look up translations in" — handy when locale codes follow country (`ar-eg`, `ar-sa`) but you want to choose at lookup time without redefining the current locale.
 
-(Note: the config key is `translationLocalCode`, missing the `e`. This is a known typo — see CHANGELOG.)
+(Note: the correctly-spelled config key is `translationLocaleCode`. The legacy misspelled `translationLocalCode` (missing the `e`) still works as a `@deprecated` fallback for backward compatibility — when both are set, `translationLocaleCode` wins. See CHANGELOG.)
 
 ## Fallback chain (plain lookup)
 

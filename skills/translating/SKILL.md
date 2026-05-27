@@ -12,7 +12,7 @@ Four functions read from the dictionary: `trans`, `transFrom`, `plainTrans`, `tr
 
 ## trans(keyword, placeholders?, converter?)
 
-The everyday call. Translates `keyword` against the current locale (or `getTranslationLocaleCode()` if a `translationLocalCode` override exists), falls back to the fallback locale, then returns the keyword itself.
+The everyday call. Translates `keyword` against the current locale (or `getTranslationLocaleCode()` if a `translationLocaleCode` override exists — the legacy misspelled `translationLocalCode` is still honored as a deprecated fallback), falls back to the fallback locale, then returns the keyword itself.
 
 ```ts
 import { trans, extend } from "@mongez/localization";

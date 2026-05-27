@@ -15,8 +15,35 @@ The React adapter (`jsxConverter`, `transX`) is [`@mongez/react-localization`](h
 ## Install
 
 ```sh
+# npm
+npm install @mongez/localization
+
+# yarn
 yarn add @mongez/localization
-# peer: @mongez/events, @mongez/reinforcements
+
+# pnpm
+pnpm add @mongez/localization
+```
+
+`@mongez/events` and `@mongez/reinforcements` install automatically as runtime deps.
+
+## Quick example
+
+Configure once at boot, register dictionaries per locale, then read by keyword. Switching the current locale flips every subsequent `trans()` call:
+
+```ts
+import { setLocalizationConfigurations, extend, trans, setCurrentLocaleCode } from "@mongez/localization";
+
+setLocalizationConfigurations({ defaultLocaleCode: "en", fallback: "en" });
+
+extend("en", { home: "Home", greet: "Hello :name" });
+extend("ar", { home: "الرئيسية", greet: "مرحبا :name" });
+
+trans("home");                     // "Home"
+trans("greet", { name: "Ada" });   // "Hello Ada"
+
+setCurrentLocaleCode("ar");
+trans("home");                     // "الرئيسية"
 ```
 
 ## Import pattern

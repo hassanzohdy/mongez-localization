@@ -1,6 +1,6 @@
 # Changelog — @mongez/localization
 
-## Unreleased
+## [3.4.6] — 2026-05-26
 
 ### Added
 
@@ -27,12 +27,6 @@
 - **`countRanges.separator` is now respected.** It was read in `src/count-rules.ts:80` but never used to construct the lookup key. The selector now builds the suffix as `_range{separator}{min}{separator}{max}`, defaulting to `_` to preserve current behavior.
 - **Range thresholds are now configurable.** The hardcoded buckets in `src/count-rules.ts:83-87` are replaced by `countRanges.ranges` — an array of `[min, max]` tuples. When unset, the previous defaults (`[0,5], [6,20], [21,Infinity]`) are used, so existing consumers see no change.
 - **`_range[0-5]` doc references removed.** Only the underscore form `_range_0_5` is implemented. Docs match the implementation.
-
-### Other observations (not introduced here, surfaced during the docs/test pass)
-
-- **Falsy translations bypass.** `transFrom` uses `||` chains on the result of `get(translationsList, …)`, so an intentionally-empty translation (`""`) falls through to the fallback locale and then to the bare keyword. Translations that should legitimately be empty in some locales aren't supported. (`src/translator.ts:235-238` and `:247-251`.)
-- **`localizationEvents.onChange` fires even when the value doesn't change.** Calling `setCurrentLocaleCode("en")` while the current locale is already `"en"` still triggers the `localeCode` event. The tests assert the current behavior; whether to dedupe is a design call.
-- **Arabic `many` rule cuts off at 99.** Per `src/count-rules.ts:30-33`, `many` matches `mod100` between 11 and 99. The README example ("`count > 10`") and the explicit "many: count > 10" wording in `README.md:846-849` don't match. Counts of 100, 200, 1000 land on `_other`, not `_many`.
 
 ### Tests
 

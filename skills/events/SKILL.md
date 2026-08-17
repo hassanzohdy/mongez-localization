@@ -2,8 +2,6 @@
 name: mongez-localization-events
 description: |
   The `localizationEvents` bus — subscribing to locale and fallback changes via `onChange`, unsubscribing, and driving React re-renders or cookie/URL persistence without the React adapter.
-  TRIGGER when: code imports `localizationEvents`, `LocaleCodeChangeCallback`, or `LocalizationEventName` from `@mongez/localization`; code calls `localizationEvents.onChange("localeCode", ...)` or `localizationEvents.onChange("fallback", ...)`; code subscribes to `localization.change.localeCode`/`localization.change.fallback` on `@mongez/events`; user asks "how do I react to a locale switch", "how do I persist the locale to a cookie/localStorage", "how do I sync the URL `?lang=` with the current locale", or "how do I trigger a React re-render on locale change without @mongez/react-localization".
-  SKIP: `mongez-localization-translating` (just reading translations), `mongez-localization-recipes` (full end-to-end setups including events); `@mongez/react-localization` is the React-specific layer on top of this core — if it's already installed, prefer its `useCurrentLocale`/provider hooks over a hand-rolled subscriber.
 ---
 
 # Events

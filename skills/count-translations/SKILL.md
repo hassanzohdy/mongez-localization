@@ -2,8 +2,6 @@
 name: mongez-localization-count-translations
 description: |
   Plural/count-based translations — keyword suffixes (`_zero`, `_one`, `_two`, `_three`, `_few`, `_many`, `_negative`, `_other`), built-in English and Arabic rules, custom `countRules`, range-based suffixes (`countRanges`), and the full selector chain.
-  TRIGGER when: code passes `{ count: n }` to `trans`/`plainTrans`/`transFrom`; code uses `countRules`, `countRanges`, `CountRuleFunction`, `LanguageCountRules`, or `CountRulesConfig` from `@mongez/localization`; keywords end in `_zero`/`_one`/`_two`/`_three`/`_few`/`_many`/`_negative`/`_other`/`_range_*`; user asks "how do I pluralize a keyword", "how do Arabic plural rules work", "how do I define custom plural rules for French/Polish", or "how do range-based count suffixes work".
-  SKIP: `mongez-localization-interpolation` (plain placeholder substitution without count machinery — use a non-`count` placeholder name like `:n`/`:total`), `mongez-localization-translating` (non-count lookups); `@mongez/react-localization` is the React-specific layer on top of this core — pluralization is the same in both, but use its skills for JSX rendering concerns.
 ---
 
 # Count-based translations

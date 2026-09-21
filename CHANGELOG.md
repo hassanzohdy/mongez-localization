@@ -1,5 +1,15 @@
 # Changelog — @mongez/localization
 
+## [3.5.0] — 2026-09-21
+
+### Added
+
+- `transFromKeywords(localeCode, keywords, key, placeholders?, converter?)` resolves translations from an explicit dictionary without registering it globally. It retains interpolation, plural selection, and converter behavior for request-scoped rendering.
+
+### Fixed
+
+- Grouped translation registration rejects prototype-mutating key paths, including nested unsafe paths.
+
 ## [3.4.7] — 2026-08-17
 
 Maintenance release. No code changes and no behaviour change — this pins an existing safety property so a future refactor can't quietly remove it.

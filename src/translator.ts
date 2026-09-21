@@ -32,6 +32,18 @@ let translationsList: TranslationsList = {};
  */
 let fallbackLocaleCode: string = "en";
 
+const dangerousTranslationPathSegments = new Set([
+  "__proto__",
+  "constructor",
+  "prototype",
+]);
+
+function isSafeTranslationPath(segments: string[]): boolean {
+  return segments.every(
+    segment => !dangerousTranslationPathSegments.has(segment),
+  );
+}
+
 /**
  * Get current locale code
  */
@@ -138,6 +150,13 @@ export function groupedTranslations(
     const keyword = key.split(".");
     const localeCode = keyword.pop();
 
+    // `set` follows dot notation through regular objects. Never pass a path
+    // containing prototype-mutating segments into it, whether that segment
+    // originated in the locale, a group name, or a keyword.
+    if (!localeCode || !isSafeTranslationPath([localeCode, ...keyword])) {
+      continue;
+    }
+
     set(translationsList, localeCode + "." + keyword.join("."), object[key]);
   }
 }
@@ -202,6 +221,121 @@ export function plainTrans(keyword: string, placeholders?: any) {
   );
 }
 
+type TranslationLookup = (localeCode: string, keyword: string) => any;
+
+type ResolvedTranslation = {
+  translation: any;
+  placeholders: any;
+};
+
+function hasTranslation(
+  translation: any,
+  preserveEmptyTranslations: boolean,
+): boolean {
+  return preserveEmptyTranslations
+    ? translation !== undefined && translation !== null
+    : Boolean(translation);
+}
+
+/**
+ * Resolve a string keyword through the supplied locale lookup.
+ *
+ * The fallback lookup is optional so consumers with a complete, scoped
+ * dictionary can resolve only the selected locale without consulting the
+ * global translations list.
+ */
+function resolveStringTranslation(
+  localeCode: string,
+  keyword: string,
+  placeholders: any,
+  lookup: TranslationLookup,
+  fallbackLookup?: TranslationLookup,
+  preserveEmptyTranslations = false,
+): ResolvedTranslation {
+  let translation;
+
+  if (placeholders?.count !== undefined) {
+    const count = Number(placeholders.count);
+
+    // Try current locale with its count rules.
+    const currentCountKey = getCountKey(count, localeCode);
+    translation = lookup(localeCode, `${keyword}${currentCountKey}`);
+
+    // When configured, the global reader tries the fallback locale using its
+    // own count rules before falling through to `_other` and the base key.
+    if (
+      !hasTranslation(translation, preserveEmptyTranslations) &&
+      fallbackLookup &&
+      fallbackLocaleCode
+    ) {
+      const fallbackCountKey = getCountKey(count, fallbackLocaleCode);
+      translation = fallbackLookup(
+        fallbackLocaleCode,
+        `${keyword}${fallbackCountKey}`,
+      );
+    }
+
+    if (!hasTranslation(translation, preserveEmptyTranslations)) {
+      translation = lookup(localeCode, `${keyword}_other`);
+    }
+
+    if (
+      !hasTranslation(translation, preserveEmptyTranslations) &&
+      fallbackLookup &&
+      fallbackLocaleCode
+    ) {
+      translation = fallbackLookup(fallbackLocaleCode, `${keyword}_other`);
+    }
+
+    if (!hasTranslation(translation, preserveEmptyTranslations)) {
+      translation = lookup(localeCode, keyword);
+    }
+
+    if (
+      !hasTranslation(translation, preserveEmptyTranslations) &&
+      fallbackLookup &&
+      fallbackLocaleCode
+    ) {
+      translation = fallbackLookup(fallbackLocaleCode, keyword);
+    }
+
+    // Keep the existing behavior: format the count only after resolving a
+    // translation, and pass the absolute value to the configured converter.
+    if (
+      hasTranslation(translation, preserveEmptyTranslations) &&
+      placeholders.count !== undefined
+    ) {
+      placeholders = { ...placeholders, count: formatCount(count) };
+    }
+  } else {
+    translation = lookup(localeCode, keyword);
+
+    if (
+      !hasTranslation(translation, preserveEmptyTranslations) &&
+      fallbackLookup &&
+      fallbackLocaleCode
+    ) {
+      translation = fallbackLookup(fallbackLocaleCode, keyword);
+    }
+  }
+
+  return { translation, placeholders };
+}
+
+function convertTranslation(
+  translation: any,
+  keyword: Translatable,
+  placeholders: any,
+  converter: Converter,
+  preserveEmptyTranslations = false,
+) {
+  if (!hasTranslation(translation, preserveEmptyTranslations)) return keyword;
+
+  return placeholders
+    ? converter(translation, placeholders, getPlaceholderPattern())
+    : translation;
+}
+
 /**
  * Translate the given keyword for the given locale code
  * Please note this method accepts dot notation syntax
@@ -212,55 +346,67 @@ export function transFrom(
   placeholders?: any,
   converter = currentConverter,
 ) {
-  let translation;
   if (typeof keyword === "object") {
-    translation = keyword[localeCode] || keyword[fallbackLocaleCode];
-  } else {
-    // Check if we have a count in placeholders
-    if (placeholders?.count !== undefined) {
-      const count = Number(placeholders.count);
-      
-      // Try current locale with its count rules
-      const currentCountKey = getCountKey(count, localeCode);
-      translation = get(translationsList, `${localeCode}.${keyword}${currentCountKey}`);
-      
-      // If not found and we have a fallback, try the fallback locale with its own count rules
-      if (!translation && fallbackLocaleCode) {
-        const fallbackCountKey = getCountKey(count, fallbackLocaleCode);
-        translation = get(translationsList, `${fallbackLocaleCode}.${keyword}${fallbackCountKey}`);
-      }
-      
-      // If still not found, try other variants in order:
-      // 1. Current locale _other
-      // 2. Fallback locale _other
-      // 3. Current locale base
-      // 4. Fallback locale base
-      if (!translation) {
-        translation = get(translationsList, `${localeCode}.${keyword}_other`) ||
-          (fallbackLocaleCode && get(translationsList, `${fallbackLocaleCode}.${keyword}_other`)) ||
-          get(translationsList, `${localeCode}.${keyword}`) ||
-          (fallbackLocaleCode && get(translationsList, `${fallbackLocaleCode}.${keyword}`));
-      }
-
-      // Format the count value according to configuration
-      if (translation && placeholders.count !== undefined) {
-        placeholders = { ...placeholders, count: formatCount(count) };
-      }
-    } else {
-      // No count, just get regular translation
-      translation =
-        get(translationsList, `${localeCode}.${keyword}`) ||
-        (fallbackLocaleCode
-          ? get(translationsList, `${fallbackLocaleCode}.${keyword}`)
-          : null);
-    }
+    return convertTranslation(
+      keyword[localeCode] || keyword[fallbackLocaleCode],
+      keyword,
+      placeholders,
+      converter,
+    );
   }
 
-  if (!translation) return keyword;
+  const resolved = resolveStringTranslation(
+    localeCode,
+    keyword,
+    placeholders,
+    (translationLocaleCode, translationKeyword) =>
+      get(translationsList, `${translationLocaleCode}.${translationKeyword}`),
+    (translationLocaleCode, translationKeyword) =>
+      get(translationsList, `${translationLocaleCode}.${translationKeyword}`),
+  );
 
-  return placeholders
-    ? converter(translation, placeholders, getPlaceholderPattern())
-    : translation;
+  return convertTranslation(
+    resolved.translation,
+    keyword,
+    resolved.placeholders,
+    converter,
+  );
+}
+
+/**
+ * Translate from a selected locale's keyword bag without reading the global
+ * translations list or the configured fallback locale for string keywords.
+ * Inline translation objects retain the same locale/fallback behavior as
+ * `transFrom`.
+ */
+export function transFromKeywords(
+  localeCode: string,
+  keywords: Keywords,
+  keyword: Translatable,
+  placeholders?: any,
+  converter: Converter = currentConverter,
+) {
+  if (typeof keyword !== "string") {
+    return transFrom(localeCode, keyword, placeholders, converter);
+  }
+
+  const resolved = resolveStringTranslation(
+    localeCode,
+    keyword,
+    placeholders,
+    (_translationLocaleCode, translationKeyword) =>
+      get(keywords, translationKeyword),
+    undefined,
+    true,
+  );
+
+  return convertTranslation(
+    resolved.translation,
+    keyword,
+    resolved.placeholders,
+    converter,
+    true,
+  );
 }
 
 export type WithPlaceholder<T> = {

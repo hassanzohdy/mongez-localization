@@ -14,8 +14,9 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "vitest": "^2.1.0"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   },
   "repository": {
     "type": "git",
@@ -46,5 +47,6 @@
     "angular",
     "mongez"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "pnpm@12.15.0"
 }

@@ -48,7 +48,7 @@ trans("home");                     // "الرئيسية"
 | **Placeholder interpolation** | Default `:name` syntax. Switch to `{{name}}` or any RegExp via `placeholderPattern`. Unmatched placeholders survive in the output so missing slots are visible. |
 | **Count-based plurals** | Suffix keys with `_zero`/`_one`/`_two`/`_three`/`_many`/`_negative`/`_other` and pass `{ count: n }`. Built-in rule packs for English and Arabic; bring your own via `countRules`. |
 | **Range-based count buckets** | Opt-in `countRanges` for `0–5` / `6–20` / `21+` style buckets with `_range_<min>_<max>` suffixes (or `_range_<min>_plus` for open-ended). |
-| **Locale-switch events** | `localizationEvents.onChange("localeCode" \| "fallback", cb)` — drive cookie/URL persistence, framework re-renders, analytics. |
+| **Locale-switch events** | `localizationEvents.onChange("localeCode" \| "fallback" \| "translations", cb)` — drive cookie/URL persistence, framework re-renders, analytics. |
 | **Typed `transObject` proxy** | `transObject(dict)` returns a Proxy where direct reads return the current-locale string and `.p(key, ...)` interpolates. |
 | **`extend` merges, `setTranslationsList` replaces** | Two patterns for two different needs — feature-file growth vs. boot-time bulk load. |
 | **Swappable converter** | Default `plainConverter` produces strings. Swap it for `jsxConverter` (from `@mongez/react-localization`) to interpolate JSX nodes. |
@@ -492,7 +492,18 @@ setFallbackLocaleCode("en");
 getFallbackLocaleCode();     // "en"
 ```
 
-Under the hood, events ride the `@mongez/events` bus at `localization.change.localeCode` and `localization.change.fallback` — you can subscribe with raw `events.subscribe(...)` if you need to.
+And one for translation registration. It fires after `extend`, `groupedTranslations` and `setTranslationsList`, with the affected locale codes. `getTranslationsRevision()` is a counter bumped by the same three calls, handy for cache invalidation:
+
+```ts
+localizationEvents.onChange("translations", (localeCodes) => {
+  console.log("Translations changed for", localeCodes); // e.g. ["en", "ar"]
+});
+
+extend("en", { hello: "Hello" });
+getTranslationsRevision();   // increased by 1
+```
+
+Under the hood, events ride the `@mongez/events` bus at `localization.change.localeCode`, `localization.change.fallback` and `localization.change.translations` — you can subscribe with raw `events.subscribe(...)` if you need to.
 
 > **Events fire on every set call.** `setCurrentLocaleCode("en")` while the locale is already `"en"` still triggers the `localeCode` event. The package does not dedupe — subscribers that care about real transitions should compare `next` and `prev` themselves.
 
@@ -689,6 +700,8 @@ import type {
   LocalizationConfigurations,
   LocaleCodeChangeCallback,
   LocalizationEventName,
+  TranslationsChangeCallback,
+  TranslationsEventName,
   CountRuleFunction,
   LanguageCountRules,
   CountRulesConfig,

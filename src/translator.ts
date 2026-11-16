@@ -88,6 +88,24 @@ export function setCurrentLocaleCode(localeCode: string): void {
 }
 
 /**
+ * Translations revision, bumped whenever translations are registered or replaced
+ */
+let translationsRevision = 0;
+
+/**
+ * Get the translations revision, a counter bumped by `extend`,
+ * `groupedTranslations` and `setTranslationsList`
+ */
+export function getTranslationsRevision(): number {
+  return translationsRevision;
+}
+
+function translationsChanged(localeCodes: string[]): void {
+  translationsRevision++;
+  localizationEvents.triggerTranslationsChange(localeCodes);
+}
+
+/**
  * Add keywords
  */
 export function extend(localeCode: string, keywords: Keywords) {
@@ -95,6 +113,8 @@ export function extend(localeCode: string, keywords: Keywords) {
     translationsList[localeCode] || {},
     keywords,
   ) as Keywords;
+
+  translationsChanged([localeCode]);
 }
 
 /**
@@ -146,6 +166,8 @@ export function groupedTranslations(
 
   // now the locale codes are the last dot in each key
   // now we will loop over the object and add each key to the translations list
+  const affectedLocaleCodes = new Set<string>();
+
   for (const key in object) {
     const keyword = key.split(".");
     const localeCode = keyword.pop();
@@ -158,14 +180,24 @@ export function groupedTranslations(
     }
 
     set(translationsList, localeCode + "." + keyword.join("."), object[key]);
+    affectedLocaleCodes.add(localeCode);
   }
+
+  translationsChanged([...affectedLocaleCodes]);
 }
 
 /**
  * Override the entire translations list
  */
 export function setTranslationsList(translations: TranslationsList): void {
+  const affectedLocaleCodes = new Set([
+    ...Object.keys(translationsList),
+    ...Object.keys(translations),
+  ]);
+
   translationsList = translations;
+
+  translationsChanged([...affectedLocaleCodes]);
 }
 
 /**

@@ -103,7 +103,7 @@ describe("transFromKeywords", () => {
   });
 });
 
-describe("transFrom count fallback order (3.5.2)", () => {
+describe("transFrom count fallback order (3.6.0)", () => {
   it("uses the current locale's _other before the fallback locale's count variant", () => {
     // Until 3.5.1 the fallback's `_one` won here, so an Arabic pack that defines
     // only `_other` showed English for a count of 1.

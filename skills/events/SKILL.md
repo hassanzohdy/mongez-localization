@@ -8,7 +8,7 @@ description: |
 
 `localizationEvents` is a thin wrapper over `@mongez/events` that publishes locale-switch notifications.
 
-## Two channels
+## Three channels
 
 ```ts
 import { localizationEvents } from "@mongez/localization";
@@ -25,8 +25,27 @@ localizationEvents.onChange("fallback", (next, prev) => {
 ```
 
 ```ts
+localizationEvents.onChange("translations", (localeCodes) => {
+  // Fired after extend(...), groupedTranslations(...) and setTranslationsList(...).
+  // `localeCodes` lists the affected locale codes, for example ["en", "ar"].
+});
+```
+
+Pair it with `getTranslationsRevision()`, a counter bumped by the same three calls, to cache derived data (such as a rendered dictionary) and invalidate it when it changes:
+
+```ts
+let cachedRevision = -1;
+if (cachedRevision !== getTranslationsRevision()) {
+  cachedRevision = getTranslationsRevision();
+  // rebuild the cache
+}
+```
+
+```ts
 type LocaleCodeChangeCallback = (newLocaleCode: string, oldLocaleCode: string) => void;
-type LocalizationEventName = "localeCode" | "fallback";
+type TranslationsChangeCallback = (localeCodes: string[]) => void;
+type LocalizationEventName = "localeCode" | "fallback"; // the locale-code events
+type TranslationsEventName = "translations";
 ```
 
 ## Subscription shape
@@ -48,6 +67,7 @@ Events fire on the `@mongez/events` bus under the namespace `localization.change
 
 - `localization.change.localeCode` — current-locale changes
 - `localization.change.fallback` — fallback-locale changes
+- `localization.change.translations` — translations registered or replaced (callback receives the locale codes array)
 
 So raw `events.subscribe("localization.change.localeCode", cb)` works too — `localizationEvents.onChange` is purely a typed convenience.
 

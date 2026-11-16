@@ -1,6 +1,6 @@
 # Changelog — @mongez/localization
 
-## [3.5.2] — 2026-11-16
+## [3.6.0] — 2026-11-16
 
 ### Fixed
 
@@ -10,6 +10,11 @@
 ### Upgrading
 
 - Placeholder names in the default colon pattern no longer include `-`. A translation that places a hyphen directly after a placeholder (`:name-suffix`) now renders the value followed by `-suffix` when the object has no exact `name-suffix` key. Pass the hyphenated key, or set a custom `placeholderPattern` such as `/:([a-zA-Z0-9_-]+)/g`, to keep the previous whole-name behaviour.
+
+### Added
+
+- `getTranslationsRevision()`: a counter bumped by `extend`, `groupedTranslations` and `setTranslationsList`, so a cache can tell when the registry changed (`groupedTranslations` writes in place, so object identity does not change).
+- `localizationEvents.onChange("translations", (localeCodes) => …)`: fired after each of those calls with the affected locale codes. New types `TranslationsChangeCallback` and `TranslationsEventName`; `LocalizationEventName` keeps its meaning (`"localeCode" | "fallback"`), so code that passes a variable of that type to `onChange` keeps compiling.
 
 ## [3.5.0] — 2026-09-21
 

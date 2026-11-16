@@ -33,9 +33,21 @@ export type LocaleCodeChangeCallback = (
 ) => void;
 
 /**
- * Available event names list
+ * A callback that is called after translations were registered or replaced,
+ * it receives the affected locale codes
+ */
+export type TranslationsChangeCallback = (localeCodes: string[]) => void;
+
+/**
+ * Locale code event names, their callbacks receive the new and old codes.
+ * `"translations"` is a separate event, see `TranslationsEventName`.
  */
 export type LocalizationEventName = "localeCode" | "fallback";
+
+/**
+ * The translations registration event name
+ */
+export type TranslationsEventName = "translations";
 
 /**
  * Count rule function type

@@ -16,6 +16,7 @@ A global registry of keyword tables per locale. `trans("home.title", { name })` 
 ## Conventions and pitfalls
 - Set the translations list and current locale before the first `trans` call; a missing key returns the key itself.
 - `extend(locale, keywords)` merges into an existing locale, while `setTranslationsList` replaces all of them.
+- `getTranslationsRevision()` is a counter bumped by `extend`, `groupedTranslations` and `setTranslationsList`; `localizationEvents.onChange("translations", cb)` fires after each with the affected locale codes.
 - `plainTrans` always uses the plain converter and returns a string; `trans` may return whatever the converter produces, which is JSX once react-localization's `jsxConverter` is set as the converter.
 - `setConverter` is global, so one app has one converter.
 - Count rules are configured through `setLocalizationConfigurations`; check `count-translations.md` before adding a locale.

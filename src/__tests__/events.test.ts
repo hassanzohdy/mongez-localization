@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  extend,
+  getTranslationsRevision,
+  groupedTranslations,
   localizationEvents,
+  setTranslationsList,
   setCurrentLocaleCode,
   setFallbackLocaleCode,
   setLocalizationConfigurations,
@@ -72,5 +76,52 @@ describe("localizationEvents.onChange('fallback')", () => {
     setCurrentLocaleCode("fr");
     expect(localeSpy).toHaveBeenCalledTimes(1);
     expect(fallbackSpy).toHaveBeenCalledTimes(1); // unchanged
+  });
+});
+
+describe("localizationEvents.onChange('translations') and getTranslationsRevision", () => {
+  it("fires after extend with the locale code and bumps the revision", () => {
+    const spy = vi.fn();
+    localizationEvents.onChange("translations", spy);
+    const before = getTranslationsRevision();
+
+    extend("en", { hello: "Hello" });
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(["en"]);
+    expect(getTranslationsRevision()).toBe(before + 1);
+  });
+
+  it("fires after groupedTranslations with every affected locale code", () => {
+    const spy = vi.fn();
+    localizationEvents.onChange("translations", spy);
+    const before = getTranslationsRevision();
+
+    groupedTranslations({ home: { en: "Home", ar: "الرئيسية" } });
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0].sort()).toEqual(["ar", "en"]);
+    expect(getTranslationsRevision()).toBe(before + 1);
+  });
+
+  it("fires after setTranslationsList with old and new locale codes", () => {
+    extend("en", { a: "A" });
+    const spy = vi.fn();
+    localizationEvents.onChange("translations", spy);
+    const before = getTranslationsRevision();
+
+    setTranslationsList({ fr: { a: "A" } });
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0].sort()).toEqual(["en", "fr"]);
+    expect(getTranslationsRevision()).toBe(before + 1);
+  });
+
+  it("does not fire for locale or fallback changes", () => {
+    const spy = vi.fn();
+    localizationEvents.onChange("translations", spy);
+    setCurrentLocaleCode("ar");
+    setFallbackLocaleCode("ar");
+    expect(spy).not.toHaveBeenCalled();
   });
 });

@@ -112,6 +112,8 @@ setLocalizationConfigurations({
 
 `setLocalizationConfigurations({ translations })` calls `setTranslationsList` internally — same effect.
 
+All three registration calls (`extend`, `groupedTranslations`, `setTranslationsList`) bump `getTranslationsRevision()` and fire `localizationEvents.onChange("translations", cb)` with the affected locale codes.
+
 ## Pattern: one file per locale
 
 ```ts

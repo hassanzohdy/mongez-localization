@@ -13,7 +13,7 @@ Every export ships from the package root.
 
 ## Reference (by namespace)
 
-- [Translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translations.md): `extend`, `groupedTranslations`, `setTranslationsList`, `getTranslationsList`, `getKeywordsListOf`. Translation dictionary shape and how to register keywords.
+- [Translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translations.md): `extend`, `groupedTranslations`, `setTranslationsList`, `getTranslationsList`, `getKeywordsListOf`, `getTranslationsRevision` (counter bumped by every registration call). Translation dictionary shape and how to register keywords.
   - *Auto-trigger:* Code imports `extend`/`groupedTranslations`/`setTranslationsList`, or user asks how to register translations, structure a `TranslationsList`, or load translations from JSON.
 - [Translating](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/translating.md): `trans`, `transFrom`, `plainTrans`, `transObject`. How to read translations and what each variant is for.
   - *Auto-trigger:* Code imports `trans`/`transFrom`/`plainTrans`/`transObject`, or user asks how to translate a keyword, read from a specific locale, or get typed access to feature translations.
@@ -21,8 +21,8 @@ Every export ships from the package root.
   - *Auto-trigger:* Code passes a `placeholders` object to `trans`, imports `plainConverter`/`setConverter`, or user asks how to change placeholder syntax or write a custom converter.
 - [Count-based translations](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/count-translations.md): Suffixes (`_zero`, `_one`, `_two`, `_three`, `_many`, `_negative`, `_other`), built-in English and Arabic rules, custom rules via `countRules`.
   - *Auto-trigger:* Code passes `{ count: n }` to `trans`, uses `_zero`/`_one`/`_many`/`_other` suffixes or `countRules`/`countRanges`, or user asks how to pluralize a keyword.
-- [Events](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/events.md): `localizationEvents.onChange("localeCode" | "fallback", cb)`. Subscription shape and namespacing on the `@mongez/events` bus.
-  - *Auto-trigger:* Code imports `localizationEvents`, subscribes to `localeCode`/`fallback` changes, or user asks how to persist the locale to a cookie/URL or trigger a React re-render on switch.
+- [Events](https://raw.githubusercontent.com/hassanzohdy/mongez-localization/main/skills/events.md): `localizationEvents.onChange("localeCode" | "fallback" | "translations", cb)`. Subscription shape and namespacing on the `@mongez/events` bus.
+  - *Auto-trigger:* Code imports `localizationEvents`, subscribes to `localeCode`/`fallback`/`translations` changes, or user asks how to persist the locale to a cookie/URL or trigger a React re-render on switch.
 
 ## Recipes
 

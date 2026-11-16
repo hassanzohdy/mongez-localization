@@ -142,7 +142,7 @@ setLocalizationConfigurations({
 | `fallback` | `"en"` | Initial fallback locale. Calls `setFallbackLocaleCode`, fires the `fallback` event. |
 | `translations` | `{}` | Bulk-load every locale. Replaces any existing dictionary — not a merge. |
 | `converter` | `plainConverter` | Replace the placeholder converter (e.g. install `jsxConverter`). |
-| `placeholderPattern` | `"colon"` (`/:(\w+)/g`) | One of `"colon"`, `"doubleCurly"`, or a custom RegExp. |
+| `placeholderPattern` | `"colon"` (`/:([a-zA-Z0-9_]+)/g`) | One of `"colon"`, `"doubleCurly"`, or a custom RegExp. |
 | `countRules` | English + Arabic packs | Per-locale plural rules. See [count-based translations](#count-based-translations). |
 | `countRanges` | disabled | Enable range-based bucket suffixes. See [range-based count buckets](#range-based-count-buckets). |
 | `translationLocaleCode` | unset | Optional runtime override for what `trans` resolves the current locale to. |
@@ -304,6 +304,21 @@ extend("en", { invite: "Hi :name, :inviter sent you a code" });
 trans("invite", { name: "Ada" });      // "Hi Ada, :inviter sent you a code"
 ```
 
+Placeholder names in the default colon pattern are letters, digits and `_`. A hyphen ends the name, so a hyphen written right after a placeholder stays as literal text:
+
+```ts
+extend("en", { wait: "Wait :minutes-min" });
+trans("wait", { minutes: 5 });            // "Wait 5-min"
+```
+
+A hyphenated key is used only when the placeholders object has that exact key:
+
+```ts
+trans("wait", { "minutes-min": 5 });      // "Wait 5"
+```
+
+Apps that passed hyphenated keys before keep working. To read whole hyphenated names from the pattern itself, set a custom `placeholderPattern` such as `/:([a-zA-Z0-9_-]+)/g`.
+
 > **The converter only runs when placeholders are passed.** `trans("home")` returns the raw translation string with zero conversion overhead. The cost only kicks in when there's a placeholders object to interpolate.
 
 ### Custom converters
@@ -345,12 +360,14 @@ trans("products", { count: 4 });   // "Many products (4 in stock)"
 The selector chain for count lookups is more elaborate than the plain chain:
 
 1. Current locale + count-rule suffix (e.g. `en.products_many`)
-2. Fallback locale + count-rule suffix (using the fallback's own rules)
-3. Current locale + `_other`
+2. Current locale + `_other`
+3. Fallback locale + count-rule suffix (using the fallback's own rules)
 4. Fallback locale + `_other`
 5. Current locale + bare keyword
 6. Fallback locale + bare keyword
 7. The keyword string itself
+
+A locale that defines only `_other` (for example an Arabic pack with no `_one`) therefore shows its own `_other` text for count 1, and does not pick the fallback locale's `_one`. Define the variants the locale's rules can select when you need a specific form.
 
 Partial translation packs degrade gracefully — you can ship just `_one` and `_other` in a new locale and counts > 1 land on `_other`.
 

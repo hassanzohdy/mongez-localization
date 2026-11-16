@@ -23,7 +23,7 @@ export function resetLocalization(): void {
   setCurrentLocaleCode("en");
   setFallbackLocaleCode("en");
   setConverter(plainConverter);
-  setPlaceholderPattern(/:([a-zA-Z0-9_-]+)/g);
+  setPlaceholderPattern(/:([a-zA-Z0-9_]+)/g);
   // Strip every localization.* listener; tests don't share subscriptions.
   events.unsubscribeNamespace("localization.change");
 }

@@ -256,47 +256,40 @@ function resolveStringTranslation(
 
   if (placeholders?.count !== undefined) {
     const count = Number(placeholders.count);
+    const fallback =
+      fallbackLookup && fallbackLocaleCode
+        ? { code: fallbackLocaleCode, lookup: fallbackLookup }
+        : undefined;
 
-    // Try current locale with its count rules.
-    const currentCountKey = getCountKey(count, localeCode);
-    translation = lookup(localeCode, `${keyword}${currentCountKey}`);
+    // Order: current locale's count variant, current locale's `_other`, then the
+    // fallback locale's count variant and `_other`, then the bare keyword. A locale
+    // that defines only `_other` therefore wins over the fallback's `_one`.
+    const attempts: Array<() => any> = [
+      () => lookup(localeCode, `${keyword}${getCountKey(count, localeCode)}`),
+      () => lookup(localeCode, `${keyword}_other`),
+    ];
 
-    // When configured, the global reader tries the fallback locale using its
-    // own count rules before falling through to `_other` and the base key.
-    if (
-      !hasTranslation(translation, preserveEmptyTranslations) &&
-      fallbackLookup &&
-      fallbackLocaleCode
-    ) {
-      const fallbackCountKey = getCountKey(count, fallbackLocaleCode);
-      translation = fallbackLookup(
-        fallbackLocaleCode,
-        `${keyword}${fallbackCountKey}`,
+    if (fallback) {
+      attempts.push(
+        () =>
+          fallback.lookup(
+            fallback.code,
+            `${keyword}${getCountKey(count, fallback.code)}`,
+          ),
+        () => fallback.lookup(fallback.code, `${keyword}_other`),
       );
     }
 
-    if (!hasTranslation(translation, preserveEmptyTranslations)) {
-      translation = lookup(localeCode, `${keyword}_other`);
+    attempts.push(() => lookup(localeCode, keyword));
+
+    if (fallback) {
+      attempts.push(() => fallback.lookup(fallback.code, keyword));
     }
 
-    if (
-      !hasTranslation(translation, preserveEmptyTranslations) &&
-      fallbackLookup &&
-      fallbackLocaleCode
-    ) {
-      translation = fallbackLookup(fallbackLocaleCode, `${keyword}_other`);
-    }
+    for (const attempt of attempts) {
+      translation = attempt();
 
-    if (!hasTranslation(translation, preserveEmptyTranslations)) {
-      translation = lookup(localeCode, keyword);
-    }
-
-    if (
-      !hasTranslation(translation, preserveEmptyTranslations) &&
-      fallbackLookup &&
-      fallbackLocaleCode
-    ) {
-      translation = fallbackLookup(fallbackLocaleCode, keyword);
+      if (hasTranslation(translation, preserveEmptyTranslations)) break;
     }
 
     // Keep the existing behavior: format the count only after resolving a

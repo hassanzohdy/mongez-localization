@@ -103,12 +103,21 @@ describe("transFromKeywords", () => {
   });
 });
 
-describe("transFrom legacy count fallback order", () => {
-  it("checks fallback count variants before current locale _other", () => {
+describe("transFrom count fallback order (3.5.2)", () => {
+  it("uses the current locale's _other before the fallback locale's count variant", () => {
+    // Until 3.5.1 the fallback's `_one` won here, so an Arabic pack that defines
+    // only `_other` showed English for a count of 1.
     extend("ar", { items_other: "Arabic other" });
     extend("en", { items_one: "English one" });
     setFallbackLocaleCode("en");
 
-    expect(transFrom("ar", "items", { count: 1 })).toBe("English one");
+    expect(transFrom("ar", "items", { count: 1 })).toBe("Arabic other");
+  });
+
+  it("still uses the fallback's count variant when the current locale has neither", () => {
+    extend("en", { things_one: "English one" });
+    setFallbackLocaleCode("en");
+
+    expect(transFrom("ar", "things", { count: 1 })).toBe("English one");
   });
 });

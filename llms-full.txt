@@ -175,7 +175,7 @@ type Translatable = string | { [localeCode: string]: string };
 > **Auto-trigger:** code imports `plainConverter`, `setConverter`, `Converter`, or sets `placeholderPattern`/`converter` on `setLocalizationConfigurations` from `@mongez/localization`; code passes a `placeholders` object to `trans`/`transFrom`; user asks "how do I change placeholder syntax to {{name}}", "how do I write a custom converter", "why is my placeholder left as `:name` in the output", or "how do I escape HTML in translations"; `import { plainConverter, setConverter } from "@mongez/localization"`.
 > **Skip when:** `mongez-localization-count-translations` (count-based lookups — though `:count` is still interpolated via this layer), `mongez-localization-translating` (the lookup functions themselves); `@mongez/react-localization` is the React-specific layer on top of this core — use its `jsxConverter` and `transX` skills for JSX placeholder values like `<strong>`/`<Link>`.
 
-Default pattern: `/:(\w+)/g` (`:name`).
+Default pattern: `/:([a-zA-Z0-9_]+)/g` (`:name`). Since 3.5.2 a name stops at a hyphen: `:minutes-min` with `{ minutes: 5 }` gives `5-min`, and with `{ "minutes-min": 5 }` gives `5` (the longest hyphenated key present wins).
 
 Named alternatives: `"colon"` (default), `"doubleCurly"` (`{{name}}`). Any RegExp also works — see `src/placeholder-pattern-config.ts`.
 
@@ -193,7 +193,7 @@ A placeholder that has no matching key in the object is left in the output untou
 plainConverter(
   translation: string,
   placeholders: { [k: string]: string | number | undefined } = {},
-  placeholderPattern: RegExp = /:([a-zA-Z0-9_-]+)/g,
+  placeholderPattern: RegExp = /:([a-zA-Z0-9_]+)/g,
 ): string
 ```
 
@@ -258,7 +258,7 @@ setLocalizationConfigurations({
 });
 ```
 
-Selector order: current-locale's count-tagged variant → fallback-locale's count-tagged variant → current `_other` → fallback `_other` → current bare → fallback bare → keyword itself.
+Selector order (3.5.2): current-locale's count-tagged variant → current `_other` → fallback-locale's count-tagged variant → fallback `_other` → current bare → fallback bare → keyword itself. A locale that defines only `_other` therefore shows its own text instead of the fallback's `_one`.
 
 `:count` is interpolated as the **absolute** value (negatives turn into positives in the output).
 

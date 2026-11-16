@@ -115,14 +115,14 @@ The match order is the iteration order of `Object.entries(rules)`, with `negativ
 When `trans(keyword, { count })` runs, the lookup tries:
 
 1. `translationsList[currentLocale][keyword + <currentLocaleCountKey>]`
-2. `translationsList[fallbackLocale][keyword + <fallbackLocaleCountKey>]`
-3. `translationsList[currentLocale][keyword + "_other"]`
+2. `translationsList[currentLocale][keyword + "_other"]`
+3. `translationsList[fallbackLocale][keyword + <fallbackLocaleCountKey>]`
 4. `translationsList[fallbackLocale][keyword + "_other"]`
 5. `translationsList[currentLocale][keyword]`
 6. `translationsList[fallbackLocale][keyword]`
 7. The keyword itself, returned unchanged.
 
-This means partial translations degrade gracefully — if you have `_one` and `_other` in English but only a bare `apples` in Arabic, an Arabic user gets the English `apples_other` rather than nothing.
+This means partial translations degrade gracefully — if you have `_one` and `_other` in English but only a bare `apples` in Arabic, an Arabic user gets the English `apples_one` for count 1 (step 3 runs before the bare keyword). A current locale that defines only `_other` is used for every count it does not match, so its `_other` text is shown for count 1 instead of the fallback's `_one`. Define each variant the locale's rules can select (Arabic: `_zero`, `_one`, `_two`, `_few`, `_many`, `_other`) to avoid mixing locales.
 
 ## Coercion
 

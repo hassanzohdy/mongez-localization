@@ -1,5 +1,7 @@
-// :placeholder pattern
-const colonPlaceholderPattern: RegExp = /:([a-zA-Z0-9_-]+)/g;
+// :placeholder pattern. Names stop at a hyphen, so `:minutes-min` reads `minutes`
+// followed by literal `-min`. A hyphenated key is still matched when the placeholders
+// object has that exact key (see `plainConverter`).
+const colonPlaceholderPattern: RegExp = /:([a-zA-Z0-9_]+)/g;
 
 // {{placeholder}} pattern
 const doubleCurlyPlaceholderPattern: RegExp = /{{([a-zA-Z0-9_-]+)}}/g;
@@ -9,7 +11,7 @@ export const placeholderPatterns = {
   doubleCurly: doubleCurlyPlaceholderPattern,
 };
 
-let placeholderPattern = /:([a-zA-Z0-9_-]+)/g;
+let placeholderPattern = colonPlaceholderPattern;
 
 export function setPlaceholderPattern(pattern: RegExp) {
   placeholderPattern = pattern;

@@ -1,5 +1,16 @@
 # Changelog — @mongez/localization
 
+## [3.5.2] — 2026-11-16
+
+### Fixed
+
+- The default colon placeholder pattern no longer swallows a following hyphen. `:minutes-min` with `{ minutes: 5 }` now renders `5-min` instead of leaving the placeholder unchanged. A hyphenated key is still used when the placeholders object has that exact key (`{ "minutes-min": 5 }` renders `5`), so existing calls that pass hyphenated keys keep working.
+- Plural lookups for a count now try the current locale's `_other` before the fallback locale's count variants. A locale that defines only `_other` (for example an Arabic pack without `_one`) shows its own text for count 1 instead of the fallback's `_one` text. The full order is documented in the count-based translations page.
+
+### Upgrading
+
+- Placeholder names in the default colon pattern no longer include `-`. A translation that places a hyphen directly after a placeholder (`:name-suffix`) now renders the value followed by `-suffix` when the object has no exact `name-suffix` key. Pass the hyphenated key, or set a custom `placeholderPattern` such as `/:([a-zA-Z0-9_-]+)/g`, to keep the previous whole-name behaviour.
+
 ## [3.5.0] — 2026-09-21
 
 ### Added

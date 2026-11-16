@@ -20,11 +20,15 @@ trans("greet", { name: "Ada" });           // "Hello Ada"
 trans("create", { item: "Category" });     // "Create New Category"
 ```
 
-A placeholder name must match `[a-zA-Z0-9_-]+` and is prefixed by `:`. If a placeholder name has no matching key in the passed object, it's **left in the output as-is**:
+A placeholder name must match `[a-zA-Z0-9_]+` and is prefixed by `:`. A hyphen ends the name, so `:minutes-min` is the placeholder `minutes` followed by literal `-min`. A hyphenated key is used only when the object has that exact key. If a placeholder name has no matching key in the passed object, it's **left in the output as-is**:
 
 ```ts
 trans("greet", {});                        // "Hello :name"
 trans("greet", { name: "Ada", extra: 1 }); // "Hello Ada"  (extras ignored)
+
+extend("en", { wait: "Wait :minutes-min" });
+trans("wait", { minutes: 5 });              // "Wait 5-min"
+trans("wait", { "minutes-min": 5 });        // "Wait 5"  (exact hyphenated key)
 ```
 
 Numbers are stringified via `.toString()`.
@@ -59,7 +63,7 @@ The pattern is global module state. Once changed, every subsequent translation u
 function plainConverter(
   translation: string,
   placeholders: { [key: string]: string | number | undefined } = {},
-  placeholderPattern: RegExp = /:([a-zA-Z0-9_-]+)/g,
+  placeholderPattern: RegExp = /:([a-zA-Z0-9_]+)/g,
 ): string;
 ```
 
